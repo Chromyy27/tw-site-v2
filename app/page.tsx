@@ -9,13 +9,19 @@ import {
   Linkedin,
   Instagram,
   Menu,
+  type LucideIcon,
 } from 'lucide-react'
 
-const socialLinks = [
+interface SocialLink {
+  Icon: LucideIcon
+  href: string
+}
+
+const socialLinks: SocialLink[] = [
   { Icon: Twitter, href: '#' },
   { Icon: Linkedin, href: '#' },
   { Icon: Instagram, href: '#' },
-] as const
+]
 
 export default function BloomHero() {
   return (
@@ -32,10 +38,8 @@ export default function BloomHero() {
 
       {/* ─── Left Panel ─── */}
       <div className="relative w-full lg:w-[52%] z-10 flex flex-col min-h-screen">
-        {/* Frosted glass panel background */}
         <div className="liquid-glass-strong absolute inset-4 lg:inset-6 rounded-3xl" />
 
-        {/* Panel content sits above the glass layer */}
         <div className="relative z-10 flex flex-col flex-1 px-10 lg:px-14 py-10 lg:py-12">
           {/* Nav */}
           <nav className="flex items-center justify-between">
@@ -120,7 +124,6 @@ export default function BloomHero() {
       <div className="hidden lg:flex w-[48%] flex-col min-h-screen z-10 p-6 gap-6">
         {/* Top bar */}
         <div className="flex items-center justify-between">
-          {/* Social pill */}
           <div className="liquid-glass rounded-full px-3 py-2 flex items-center gap-1.5">
             {socialLinks.map(({ Icon, href }, i) => (
               <a
@@ -139,7 +142,6 @@ export default function BloomHero() {
             </div>
           </div>
 
-          {/* Account button */}
           <button className="liquid-glass rounded-full p-1.5 flex items-center gap-2 text-white hover:scale-105 transition-transform">
             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
               <Sparkles size={14} />
@@ -160,16 +162,13 @@ export default function BloomHero() {
 
         {/* Bottom feature section */}
         <div className="mt-auto liquid-glass rounded-[2.5rem] p-4 flex flex-col gap-3">
-          {/* Two side-by-side cards */}
           <div className="flex gap-3">
             <div className="liquid-glass rounded-3xl flex-1 p-4 flex flex-col gap-3">
               <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
                 <Wand2 size={14} className="text-white" />
               </div>
               <div>
-                <p className="font-display font-medium text-white text-sm">
-                  Processing
-                </p>
+                <p className="font-display font-medium text-white text-sm">Processing</p>
                 <p className="text-white/50 text-xs mt-0.5">Neural render pipeline</p>
               </div>
             </div>
@@ -179,15 +178,12 @@ export default function BloomHero() {
                 <BookOpen size={14} className="text-white" />
               </div>
               <div>
-                <p className="font-display font-medium text-white text-sm">
-                  Growth Archive
-                </p>
+                <p className="font-display font-medium text-white text-sm">Growth Archive</p>
                 <p className="text-white/50 text-xs mt-0.5">10k+ plant species</p>
               </div>
             </div>
           </div>
 
-          {/* Bottom card with flower thumbnail */}
           <div className="liquid-glass rounded-3xl p-4 flex items-center gap-4">
             <div className="relative w-24 h-16 rounded-xl overflow-hidden flex-shrink-0">
               <Image
