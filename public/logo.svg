@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <!-- Cardinal petals -->
+  <ellipse cx="20" cy="8" rx="5" ry="9" fill="white" opacity="0.95"/>
+  <ellipse cx="20" cy="32" rx="5" ry="9" fill="white" opacity="0.95"/>
+  <ellipse cx="8" cy="20" rx="9" ry="5" fill="white" opacity="0.95"/>
+  <ellipse cx="32" cy="20" rx="9" ry="5" fill="white" opacity="0.95"/>
+  <!-- Diagonal petals -->
+  <ellipse cx="11" cy="11" rx="4.5" ry="8.5" fill="white" opacity="0.7" transform="rotate(-45 11 11)"/>
+  <ellipse cx="29" cy="11" rx="4.5" ry="8.5" fill="white" opacity="0.7" transform="rotate(45 29 11)"/>
+  <ellipse cx="11" cy="29" rx="4.5" ry="8.5" fill="white" opacity="0.7" transform="rotate(45 11 29)"/>
+  <ellipse cx="29" cy="29" rx="4.5" ry="8.5" fill="white" opacity="0.7" transform="rotate(-45 29 29)"/>
+  <!-- Center -->
+  <circle cx="20" cy="20" r="9" fill="white"/>
+  <circle cx="20" cy="20" r="5" fill="white" opacity="0.4"/>
+</svg>
