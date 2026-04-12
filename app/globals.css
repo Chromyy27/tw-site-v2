@@ -3,34 +3,66 @@
 @tailwind utilities;
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from { opacity: 0; } to { opacity: 1; }
 }
-
 @keyframes fadeInDialog {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from { opacity: 0; } to { opacity: 1; }
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
+.animate-fade-in-up      { animation: fadeInUp      0.6s ease-out forwards; }
+.animate-fade-in-overlay { animation: fadeInOverlay 0.4s ease-out forwards; }
+.animate-slide-up-overlay { animation: fadeInDialog  0.5s ease-out forwards; }
+
+/* ── Icon glow pulse ── */
+@keyframes iconGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 10px var(--glow),
+      0 0 24px var(--glow-soft),
+      0 6px 20px rgba(0,0,0,0.22),
+      inset 0 1px 0 rgba(255,255,255,0.28);
+  }
+  50% {
+    box-shadow:
+      0 0 20px var(--glow),
+      0 0 48px var(--glow-soft),
+      0 6px 20px rgba(0,0,0,0.22),
+      inset 0 1px 0 rgba(255,255,255,0.28);
+  }
 }
 
-.animate-fade-in-overlay {
-  animation: fadeInOverlay 0.4s ease-out forwards;
+.icon-glow {
+  animation: iconGlow 3s ease-in-out infinite;
 }
 
-.animate-slide-up-overlay {
-  animation: fadeInDialog 0.5s ease-out forwards;
+/* ── iOS top-gloss shine on icons ── */
+.ios-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    160deg,
+    rgba(255,255,255,0.42) 0%,
+    rgba(255,255,255,0.18) 35%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+/* ── iOS liquid glass dock ── */
+.ios-dock {
+  background: rgba(255,255,255,0.6);
+  -webkit-backdrop-filter: blur(40px) saturate(220%);
+  backdrop-filter: blur(40px) saturate(220%);
+  border: 1.5px solid rgba(255,255,255,0.92);
+  box-shadow:
+    0 8px 40px rgba(0,0,0,0.07),
+    0 2px 8px rgba(0,0,0,0.04),
+    inset 0 1.5px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(0,0,0,0.04);
 }
