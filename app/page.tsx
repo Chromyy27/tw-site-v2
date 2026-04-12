@@ -1,212 +1,363 @@
-import Image from 'next/image'
+'use client'
+
+import { Fragment, useEffect, useState } from 'react'
 import {
-  Sparkles,
-  Download,
-  Wand2,
+  Snowflake,
+  Star,
+  ChevronDown,
+  BarChart3,
   BookOpen,
-  ArrowRight,
-  Twitter,
-  Linkedin,
-  Instagram,
-  Menu,
+  Users,
+  Rocket,
+  Check,
   type LucideIcon,
 } from 'lucide-react'
 
-interface SocialLink {
+type TabId = 'analyse' | 'train' | 'testing' | 'deploy'
+
+interface TabItem {
+  id: TabId
+  label: string
   Icon: LucideIcon
-  href: string
 }
 
-const socialLinks: SocialLink[] = [
-  { Icon: Twitter, href: '#' },
-  { Icon: Linkedin, href: '#' },
-  { Icon: Instagram, href: '#' },
+const TABS: TabItem[] = [
+  { id: 'analyse', label: 'Analyse', Icon: BarChart3 },
+  { id: 'train',   label: 'Train',   Icon: BookOpen  },
+  { id: 'testing', label: 'Testing', Icon: Users     },
+  { id: 'deploy',  label: 'Deploy',  Icon: Rocket    },
 ]
 
-export default function BloomHero() {
+function AnalyseOverlay() {
   return (
-    <div className="relative flex flex-row min-h-screen bg-black">
-      {/* ─── Video Background (fixed so it stays put while page scrolls) ─── */}
-      <video
-        className="fixed inset-0 w-full h-full object-cover z-0"
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260315_073750_51473149-4350-4920-ae24-c8214286f323.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-      />
-
-      {/* ─── Left Panel ─── */}
-      <div className="relative w-full lg:w-[52%] z-10 flex flex-col min-h-screen">
-        <div className="liquid-glass-strong absolute inset-4 lg:inset-6 rounded-3xl" />
-
-        <div className="relative z-10 flex flex-col flex-1 px-10 lg:px-14 py-10 lg:py-12">
-          {/* Nav */}
-          <nav className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Image
-                src="/logo.svg"
-                width={32}
-                height={32}
-                alt="Bloom logo"
-                className="drop-shadow-sm"
-              />
-              <span className="font-display font-semibold text-2xl tracking-tighter text-white">
-                bloom
-              </span>
-            </div>
-            <button className="liquid-glass rounded-full px-4 py-2 flex items-center gap-2 text-white/80 text-sm hover:scale-105 transition-transform">
-              <Menu size={16} />
-              <span>Menu</span>
-            </button>
-          </nav>
-
-          {/* Hero Center */}
-          <div className="flex-1 flex flex-col items-center justify-center gap-8 text-center py-10">
-            <Image
-              src="/logo.svg"
-              width={80}
-              height={80}
-              alt="Bloom"
-              className="drop-shadow-lg"
-            />
-
-            <h1 className="font-display font-medium text-6xl lg:text-7xl tracking-[-0.05em] text-white leading-none">
-              Innovating the
-              <br />
-              spirit of{' '}
-              <em className="font-serif text-white/80">bloom</em> AI
-            </h1>
-
-            <button className="liquid-glass-strong rounded-full px-7 py-3.5 flex items-center gap-3 text-white hover:scale-105 active:scale-95 transition-transform">
-              <span className="font-display font-medium tracking-wide">Explore Now</span>
-              <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center">
-                <Download size={13} />
+    <div className="animate-fade-in-overlay absolute inset-0 bg-black/50">
+      <div
+        className="animate-slide-up-overlay absolute bg-white rounded-2xl p-6 w-80 shadow-2xl"
+        style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+      >
+        <h3 className="font-semibold text-gray-900 mb-1">Set Up Your AI Workspace</h3>
+        <p className="text-xs text-gray-500 mb-4">Step 1 of 4</p>
+        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-5">
+          <div className="bg-purple-500 h-1.5 rounded-full" style={{ width: '25%' }} />
+        </div>
+        <div className="space-y-3">
+          {[
+            { label: 'Configure workspace', done: true  },
+            { label: 'Connect your tools',  done: false },
+            { label: 'Train your model',    done: false },
+            { label: 'Deploy pipeline',     done: false },
+          ].map(({ label, done }, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div
+                className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  done ? 'bg-purple-500' : 'border-2 border-gray-300'
+                }`}
+              >
+                {done && <Check size={12} className="text-white" />}
               </div>
-            </button>
-
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              {['Artistic Gallery', 'AI Generation', '3D Structures'].map((label) => (
-                <span
-                  key={label}
-                  className="liquid-glass rounded-full px-4 py-2 text-xs text-white/80"
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom Quote */}
-          <div className="flex flex-col gap-3">
-            <p className="text-xs tracking-widest uppercase text-white/50">
-              VISIONARY DESIGN
-            </p>
-            <p className="text-lg leading-relaxed">
-              <span className="font-display text-white">
-                &ldquo;We imagined a realm{' '}
+              <span className={`text-sm ${done ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>
+                {label}
               </span>
-              <em className="font-serif italic text-white/80">with no ending.</em>
-              <span className="font-display text-white">&rdquo;</span>
-            </p>
-            <div className="flex items-center gap-4">
-              <div className="flex-1 h-px bg-white/20" />
-              <span className="text-xs tracking-widest uppercase text-white/50 whitespace-nowrap">
-                MARCUS AURELIO
-              </span>
-              <div className="flex-1 h-px bg-white/20" />
             </div>
-          </div>
+          ))}
         </div>
       </div>
+    </div>
+  )
+}
 
-      {/* ─── Right Panel (desktop only) ─── */}
-      <div className="hidden lg:flex w-[48%] flex-col min-h-screen z-10 p-6 gap-6">
-        {/* Top bar */}
-        <div className="flex items-center justify-between">
-          <div className="liquid-glass rounded-full px-3 py-2 flex items-center gap-1.5">
-            {socialLinks.map(({ Icon, href }, i) => (
-              <a
-                key={i}
-                href={href}
-                className="text-white hover:text-white/80 transition-colors"
-              >
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                  <Icon size={14} />
-                </div>
-              </a>
-            ))}
-            <div className="w-px h-5 bg-white/20 mx-1" />
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-              <ArrowRight size={14} className="text-white/60" />
+function TrainOverlay() {
+  return (
+    <div className="animate-fade-in-overlay absolute inset-0 bg-black/50">
+      <div
+        className="animate-slide-up-overlay absolute bg-white rounded-2xl p-6 w-80 shadow-2xl"
+        style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+      >
+        <h3 className="font-semibold text-gray-900 mb-1">AI Model Training</h3>
+        <p className="text-xs text-gray-500 mb-4">Epoch 134 / 200</p>
+        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-5">
+          <div className="bg-orange-500 h-1.5 rounded-full" style={{ width: '67%' }} />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: 'Accuracy', value: '94.2%',   color: 'text-orange-500' },
+            { label: 'Loss',     value: '0.043',    color: 'text-orange-500' },
+            { label: 'Epochs',   value: '134/200',  color: 'text-gray-700'   },
+            { label: 'Speed',    value: '1.2k/s',   color: 'text-gray-700'   },
+          ].map(({ label, value, color }) => (
+            <div key={label} className="bg-gray-50 rounded-lg p-3">
+              <p className="text-xs text-gray-500 mb-1">{label}</p>
+              <p className={`text-sm font-semibold ${color}`}>{value}</p>
             </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TestingOverlay() {
+  return (
+    <div className="animate-fade-in-overlay absolute inset-0 bg-black/50">
+      <div
+        className="animate-slide-up-overlay absolute bg-white rounded-2xl p-6 w-80 shadow-2xl"
+        style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+            <Check size={20} className="text-green-600" />
           </div>
-
-          <button className="liquid-glass rounded-full p-1.5 flex items-center gap-2 text-white hover:scale-105 transition-transform">
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-              <Sparkles size={14} />
+          <div>
+            <h3 className="font-semibold text-gray-900">Test Suite Results</h3>
+            <p className="text-xs text-green-600">All tests passed</p>
+          </div>
+        </div>
+        <div className="space-y-2">
+          {[
+            { suite: 'Unit Tests',         count: '48/48'  },
+            { suite: 'Integration Tests',  count: '52/52'  },
+            { suite: 'E2E Tests',          count: '27/27'  },
+          ].map(({ suite, count }) => (
+            <div
+              key={suite}
+              className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+            >
+              <span className="text-sm text-gray-700">{suite}</span>
+              <span className="text-sm font-medium text-green-600">{count}</span>
             </div>
+          ))}
+        </div>
+        <div className="mt-4 text-center">
+          <span className="text-2xl font-bold text-green-600">127/127</span>
+          <p className="text-xs text-gray-500 mt-0.5">tests passing</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function DeployOverlay() {
+  return (
+    <div className="animate-fade-in-overlay absolute inset-0 bg-black/50">
+      <div
+        className="animate-slide-up-overlay absolute bg-white rounded-2xl p-6 w-80 shadow-2xl"
+        style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+      >
+        <h3 className="font-semibold text-gray-900 mb-4">Deploy to Production</h3>
+        <div className="space-y-3 mb-5">
+          {[
+            'Build completed successfully',
+            'Environment variables set',
+            'Database migrations run',
+            'Health checks passing',
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="w-5 h-5 rounded-full bg-black flex items-center justify-center flex-shrink-0">
+                <Check size={12} className="text-white" />
+              </div>
+              <span className="text-sm text-gray-700">{item}</span>
+            </div>
+          ))}
+        </div>
+        <button className="w-full bg-black text-white py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+          Deploy Now
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export default function Page() {
+  const [activeTab, setActiveTab] = useState<TabId>('analyse')
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTab((prev) => {
+        const idx = TABS.findIndex((t) => t.id === prev)
+        return TABS[(idx + 1) % TABS.length].id
+      })
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className="bg-white min-h-screen">
+      {/* ─── Navigation ─── */}
+      <div
+        className="animate-fade-in-up px-6 py-4 flex items-center justify-between max-w-7xl mx-auto"
+        style={{ animationDelay: '0.1s', opacity: 0 }}
+      >
+        <div className="flex items-center gap-2">
+          <Snowflake className="w-5 h-5" />
+          <span className="text-lg font-semibold">Team Winter</span>
+        </div>
+
+        <nav className="hidden md:flex items-center gap-8">
+          <button className="flex items-center gap-1 text-sm text-gray-700 hover:text-black transition-colors">
+            Solutions <ChevronDown size={14} />
+          </button>
+          <button className="flex items-center gap-1 text-sm text-gray-700 hover:text-black transition-colors">
+            For Teams <ChevronDown size={14} />
+          </button>
+          <button className="text-sm text-gray-700 hover:text-black transition-colors">About Us</button>
+          <button className="text-sm text-gray-700 hover:text-black transition-colors">Learn Hub</button>
+        </nav>
+
+        <div className="flex items-center gap-4">
+          <button className="text-sm text-gray-700 hover:text-black transition-colors">Login</button>
+          <button className="bg-black text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">
+            Get started free
           </button>
         </div>
-
-        {/* Community card */}
-        <div className="liquid-glass rounded-2xl p-5 w-56">
-          <h3 className="font-display font-medium text-white text-sm leading-snug">
-            Enter our ecosystem
-          </h3>
-          <p className="text-white/60 text-xs mt-2 leading-relaxed">
-            Join the growing community of AI-powered floral designers crafting
-            the future of bloom.
-          </p>
-        </div>
-
-        {/* Bottom feature section */}
-        <div className="mt-auto liquid-glass rounded-[2.5rem] p-4 flex flex-col gap-3">
-          <div className="flex gap-3">
-            <div className="liquid-glass rounded-3xl flex-1 p-4 flex flex-col gap-3">
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                <Wand2 size={14} className="text-white" />
-              </div>
-              <div>
-                <p className="font-display font-medium text-white text-sm">Processing</p>
-                <p className="text-white/50 text-xs mt-0.5">Neural render pipeline</p>
-              </div>
-            </div>
-
-            <div className="liquid-glass rounded-3xl flex-1 p-4 flex flex-col gap-3">
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                <BookOpen size={14} className="text-white" />
-              </div>
-              <div>
-                <p className="font-display font-medium text-white text-sm">Growth Archive</p>
-                <p className="text-white/50 text-xs mt-0.5">10k+ plant species</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="liquid-glass rounded-3xl p-4 flex items-center gap-4">
-            <div className="relative w-24 h-16 rounded-xl overflow-hidden flex-shrink-0">
-              <Image
-                src="/hero-flowers.svg"
-                fill
-                alt="Advanced Plant Sculpting"
-                className="object-cover"
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h4 className="font-display font-medium text-white text-sm">
-                Advanced Plant Sculpting
-              </h4>
-              <p className="text-white/60 text-xs mt-1 leading-relaxed">
-                AI-driven morphology for complex floral arrangements.
-              </p>
-            </div>
-            <button className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white text-lg font-light hover:scale-105 transition-transform flex-shrink-0">
-              +
-            </button>
-          </div>
-        </div>
       </div>
+
+      {/* ─── Hero ─── */}
+      <section className="px-6 pt-24 pb-32 max-w-7xl mx-auto text-center">
+        {/* Rating badge */}
+        <div
+          className="animate-fade-in-up inline-flex items-center gap-2 mb-8"
+          style={{ animationDelay: '0.2s', opacity: 0 }}
+        >
+          <div className="w-6 h-6 border border-gray-300 rounded flex items-center justify-center">
+            <Star size={12} className="fill-black" />
+          </div>
+          <span className="text-sm font-medium text-black">4.9 rating from 18.3K+ users</span>
+        </div>
+
+        {/* Heading */}
+        <h1
+          className="animate-fade-in-up text-6xl md:text-7xl lg:text-[80px] font-normal leading-[1.1] tracking-tight mb-5"
+          style={{ animationDelay: '0.3s', opacity: 0 }}
+        >
+          Work Together. Stay Aligned.
+          <br />
+          <span className="bg-gradient-to-r from-black via-gray-500 to-gray-400 bg-clip-text text-transparent">
+            Team Winter Powers Your Work.
+          </span>
+        </h1>
+
+        {/* Subheading */}
+        <p
+          className="animate-fade-in-up text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto"
+          style={{ animationDelay: '0.4s', opacity: 0 }}
+        >
+          Intelligent collaboration tools that sync with everything your team uses to streamline
+          workflows, boost productivity, and save time.
+        </p>
+
+        {/* CTA */}
+        <button
+          className="animate-fade-in-up bg-black text-white px-8 py-3 rounded-full text-base font-medium hover:bg-gray-800 transition-colors mb-12"
+          style={{ animationDelay: '0.5s', opacity: 0 }}
+        >
+          Begin Free Trial
+        </button>
+
+        {/* Tab Bar */}
+        <div
+          className="animate-fade-in-up flex justify-center mb-6"
+          style={{ animationDelay: '0.6s', opacity: 0 }}
+        >
+          {/* Mobile: 2×2 grid */}
+          <div className="md:hidden bg-gray-100 rounded-lg p-1 grid grid-cols-2 gap-1 w-full max-w-xs">
+            {TABS.map(({ id, label, Icon }) => (
+              <button
+                key={id}
+                onClick={() => setActiveTab(id)}
+                className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-all ${
+                  activeTab === id
+                    ? 'bg-white text-black shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Icon size={15} />
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Desktop: row with dividers */}
+          <div className="hidden md:flex bg-gray-100 rounded-lg p-1 items-center">
+            {TABS.map(({ id, label, Icon }, i) => (
+              <Fragment key={id}>
+                <button
+                  onClick={() => setActiveTab(id)}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                    activeTab === id
+                      ? 'bg-white text-black shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <Icon size={15} />
+                  {label}
+                </button>
+                {i < TABS.length - 1 && (
+                  <div className="w-px h-5 bg-gray-300 mx-0.5" />
+                )}
+              </Fragment>
+            ))}
+          </div>
+        </div>
+
+        {/* Video + Overlay */}
+        <div
+          className="animate-fade-in-up relative rounded-3xl overflow-hidden h-[400px] md:h-[500px]"
+          style={{ animationDelay: '0.7s', opacity: 0 }}
+        >
+          <video
+            className="w-full h-full object-cover"
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260319_165750_358b1e72-c921-48b7-aaac-f200994f32fb.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+          {activeTab === 'analyse' && <AnalyseOverlay />}
+          {activeTab === 'train'   && <TrainOverlay />}
+          {activeTab === 'testing' && <TestingOverlay />}
+          {activeTab === 'deploy'  && <DeployOverlay />}
+        </div>
+
+        {/* Company Logos */}
+        <div
+          className="animate-fade-in-up mt-24 flex items-center justify-center gap-10 md:gap-12 flex-wrap"
+          style={{ animationDelay: '0.8s', opacity: 0 }}
+        >
+          <span className="text-sm font-semibold tracking-widest text-gray-400 uppercase">
+            INTERSCOPE
+          </span>
+          <span className="text-sm font-semibold tracking-widest text-gray-400 uppercase">
+            SPOTIFY
+          </span>
+          <div className="flex items-center gap-1.5">
+            <div className="grid grid-cols-3 gap-[3px]">
+              {Array.from({ length: 9 }).map((_, i) => (
+                <div key={i} className="w-1 h-1 rounded-full bg-gray-400" />
+              ))}
+            </div>
+            <span className="text-sm font-semibold text-gray-400">Nexera</span>
+          </div>
+          <span className="text-sm font-serif italic font-bold text-gray-400">M3</span>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-full border-2 border-gray-400 flex items-center justify-center">
+              <span className="text-[10px] font-bold text-gray-400">LC</span>
+            </div>
+            <span className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              LAURA COLE
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="flex gap-1">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+              ))}
+            </div>
+            <span className="text-sm font-semibold text-gray-400 lowercase tracking-wide">
+              vertex
+            </span>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

@@ -7,20 +7,7 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {
-      fontFamily: {
-        display: ['var(--font-poppins)', 'sans-serif'],
-        serif: ['var(--font-source-serif)', 'serif'],
-        sans: ['var(--font-poppins)', 'sans-serif'],
-      },
-      borderRadius: {
-        DEFAULT: '1rem',
-      },
-      colors: {
-        background: 'hsl(0 0% 0%)',
-        foreground: 'hsl(0 0% 100%)',
-      },
-    },
+    extend: {},
   },
   plugins: [],
 }
