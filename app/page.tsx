@@ -28,6 +28,16 @@ const TABS: TabItem[] = [
   { id: 'deploy',  label: 'Deploy',  Icon: Rocket    },
 ]
 
+const CLANS = [
+  'Team Winter',
+  'Team Winter X',
+  'Team Winter Ice',
+  'Team Winter Red',
+  'Team Winter Sky',
+  'Team Winter 2',
+  'Team Winter NXT',
+]
+
 function AnalyseOverlay() {
   return (
     <div className="animate-fade-in-overlay absolute inset-0 bg-black/50">
@@ -318,44 +328,21 @@ export default function Page() {
           {activeTab === 'deploy'  && <DeployOverlay />}
         </div>
 
-        {/* Company Logos */}
+        {/* Clan names */}
         <div
-          className="animate-fade-in-up mt-24 flex items-center justify-center gap-10 md:gap-12 flex-wrap"
+          className="animate-fade-in-up mt-24 flex items-center justify-center gap-8 md:gap-10 flex-wrap"
           style={{ animationDelay: '0.8s', opacity: 0 }}
         >
-          <span className="text-sm font-semibold tracking-widest text-gray-400 uppercase">
-            INTERSCOPE
-          </span>
-          <span className="text-sm font-semibold tracking-widest text-gray-400 uppercase">
-            SPOTIFY
-          </span>
-          <div className="flex items-center gap-1.5">
-            <div className="grid grid-cols-3 gap-[3px]">
-              {Array.from({ length: 9 }).map((_, i) => (
-                <div key={i} className="w-1 h-1 rounded-full bg-gray-400" />
-              ))}
-            </div>
-            <span className="text-sm font-semibold text-gray-400">Nexera</span>
-          </div>
-          <span className="text-sm font-serif italic font-bold text-gray-400">M3</span>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full border-2 border-gray-400 flex items-center justify-center">
-              <span className="text-[10px] font-bold text-gray-400">LC</span>
-            </div>
-            <span className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
-              LAURA COLE
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="flex gap-1">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-              ))}
-            </div>
-            <span className="text-sm font-semibold text-gray-400 lowercase tracking-wide">
-              vertex
-            </span>
-          </div>
+          {CLANS.map((clan, i) => (
+            <Fragment key={clan}>
+              <span className="text-sm font-semibold tracking-wide text-gray-400 whitespace-nowrap">
+                {clan}
+              </span>
+              {i < CLANS.length - 1 && (
+                <div className="w-px h-4 bg-gray-200 hidden md:block" />
+              )}
+            </Fragment>
+          ))}
         </div>
       </section>
     </div>
