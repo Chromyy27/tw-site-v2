@@ -38,7 +38,7 @@ function AnalyseOverlay() {
         <h3 className="font-semibold text-gray-900 mb-1">Set Up Your AI Workspace</h3>
         <p className="text-xs text-gray-500 mb-4">Step 1 of 4</p>
         <div className="w-full bg-gray-200 rounded-full h-1.5 mb-5">
-          <div className="bg-purple-500 h-1.5 rounded-full" style={{ width: '25%' }} />
+          <div className="bg-sky-400 h-1.5 rounded-full" style={{ width: '25%' }} />
         </div>
         <div className="space-y-3">
           {[
@@ -50,7 +50,7 @@ function AnalyseOverlay() {
             <div key={i} className="flex items-center gap-3">
               <div
                 className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  done ? 'bg-purple-500' : 'border-2 border-gray-300'
+                  done ? 'bg-sky-400' : 'border-2 border-gray-300'
                 }`}
               >
                 {done && <Check size={12} className="text-white" />}
