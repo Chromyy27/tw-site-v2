@@ -1,323 +1,298 @@
 'use client'
 
-import { Fragment, useEffect, useState } from 'react'
-import {
-  Snowflake, ChevronDown,
-  Shield, Trophy, MessageCircle, Activity,
-  Users, Swords, Flame, Crown, Check,
-  type LucideIcon,
-} from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Snowflake, Trophy, Clock, ChevronUp, ChevronDown, Minus, AlertCircle } from 'lucide-react'
 
-type TabId = 'clans' | 'esports' | 'community' | 'stats'
-interface TabItem { id: TabId; label: string; Icon: LucideIcon }
+interface LeaderboardEntry {
+  tag: string
+  name: string
+  trophies: number
+  clanName: string
+  clanTag: string
+  trophyGainsToday: number
+  attacksUsed: number
+}
 
-const TABS: TabItem[] = [
-  { id: 'clans',     label: 'Clans',     Icon: Shield        },
-  { id: 'esports',   label: 'eSports',   Icon: Trophy        },
-  { id: 'community', label: 'Community', Icon: MessageCircle },
-  { id: 'stats',     label: 'Stats',     Icon: Activity      },
-]
+interface ApiResponse {
+  entries: LeaderboardEntry[]
+  lastUpdated: number
+  nextUpdate: number
+  cached?: boolean
+  error?: string
+}
 
-const APPS = [
-  { label: 'Clans',   Icon: Shield,         grad: 'linear-gradient(145deg,#60a5fa 0%,#1d4ed8 100%)', glow: 'rgba(59,130,246,0.75)',  glowSoft: 'rgba(59,130,246,0.28)',  delay: '0s'   },
-  { label: 'eSports', Icon: Trophy,         grad: 'linear-gradient(145deg,#c084fc 0%,#6d28d9 100%)', glow: 'rgba(139,92,246,0.75)',  glowSoft: 'rgba(139,92,246,0.28)',  delay: '0.5s' },
-  { label: 'Socials', Icon: MessageCircle,  grad: 'linear-gradient(145deg,#4ade80 0%,#15803d 100%)', glow: 'rgba(74,222,128,0.75)', glowSoft: 'rgba(74,222,128,0.28)', delay: '1s'   },
-  { label: 'Stats',   Icon: Activity,       grad: 'linear-gradient(145deg,#fb923c 0%,#c2410c 100%)', glow: 'rgba(251,146,60,0.75)',  glowSoft: 'rgba(251,146,60,0.28)',  delay: '1.5s' },
-  { label: 'TWA',     Icon: Snowflake,      grad: 'linear-gradient(145deg,#64748b 0%,#0f172a 100%)', glow: 'rgba(100,116,139,0.65)', glowSoft: 'rgba(148,163,184,0.25)', delay: '2s'   },
-]
+const CLAN_STYLES: Record<string, { bg: string; text: string; ring: string; abbr: string }> = {
+  '#232LU2U00QJ': { bg: 'bg-sky-500/15',     text: 'text-sky-300',     ring: 'ring-sky-500/30',     abbr: 'TW'  },
+  '#232JPVV99RP': { bg: 'bg-purple-500/15',  text: 'text-purple-300',  ring: 'ring-purple-500/30',  abbr: 'TW2' },
+  '#23P8PGVJJQ':  { bg: 'bg-emerald-500/15', text: 'text-emerald-300', ring: 'ring-emerald-500/30', abbr: 'TWX' },
+}
 
-const CLANS = [
-  { name: 'Team Winter',     tag: 'TW',   members: 1840, online: 312, color: '#60a5fa' },
-  { name: 'Team Winter X',   tag: 'TWX',  members: 1520, online: 278, color: '#c084fc' },
-  { name: 'Team Winter Ice', tag: 'TWIC', members: 1380, online: 201, color: '#67e8f9' },
-  { name: 'Team Winter Red', tag: 'TWRD', members: 1290, online: 189, color: '#f87171' },
-  { name: 'Team Winter Sky', tag: 'TWSK', members: 1104, online: 143, color: '#38bdf8' },
-  { name: 'Team Winter 2',   tag: 'TW2',  members:  980, online: 112, color: '#a3e635' },
-  { name: 'Team Winter NXT', tag: 'TWNX', members:  870, online:  98, color: '#fb923c' },
-]
-
-function ClansOverlay() {
+function ClanPill({ clanName, clanTag }: { clanName: string; clanTag: string }) {
+  const s = CLAN_STYLES[clanTag]
+  const label = s?.abbr ?? clanName.replace(/Team Winter\s*/i, 'TW').replace(/\s+/g, '').slice(0, 6)
   return (
-    <div className="animate-fade-in-overlay absolute inset-0 bg-black/55">
-      <div className="animate-slide-up-overlay absolute bg-white rounded-2xl p-5 w-72 shadow-2xl"
-        style={{ left:'50%', top:'50%', transform:'translate(-50%,-50%)' }}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-gray-900">Active Clans</h3>
-          <span className="text-xs bg-blue-50 text-blue-600 font-medium px-2 py-0.5 rounded-full">7 clans</span>
-        </div>
-        <div className="space-y-2">
-          {CLANS.slice(0,5).map(({ name, tag, members, online, color }) => (
-            <div key={tag} className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
-                <span className="text-sm font-medium text-gray-800">{name}</span>
-              </div>
-              <div className="text-right">
-                <span className="text-xs text-gray-400">{members.toLocaleString()} members</span>
-                <span className="ml-2 text-xs text-green-500 font-medium">{online} online</span>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-          <span className="text-xs text-gray-500">Total members</span>
-          <span className="text-sm font-bold text-gray-900">{CLANS.reduce((a,c)=>a+c.members,0).toLocaleString()}</span>
-        </div>
-      </div>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ring-1 flex-shrink-0
+      ${s?.bg ?? 'bg-gray-700/30'} ${s?.text ?? 'text-gray-400'} ${s?.ring ?? 'ring-gray-600/30'}`}>
+      {label}
+    </span>
+  )
+}
+
+function AttackDots({ used }: { used: number }) {
+  return (
+    <div className="flex gap-[3px] items-center">
+      {Array.from({ length: 8 }, (_, i) => (
+        <span
+          key={i}
+          className={`w-[7px] h-[7px] rounded-full transition-colors duration-300 ${
+            i < used
+              ? 'bg-amber-400 shadow-[0_0_4px_rgba(251,191,36,0.55)]'
+              : 'bg-gray-800'
+          }`}
+        />
+      ))}
     </div>
   )
 }
 
-function EsportsOverlay() {
-  const results = [
-    { clan: 'TW',   opp: 'OpTic',  score: '2–1', win: true  },
-    { clan: 'TWIC', opp: 'FaZe',   score: '3–0', win: true  },
-    { clan: 'TWX',  opp: '100T',   score: '1–2', win: false },
-    { clan: 'TWRD', opp: 'NRG',    score: '2–0', win: true  },
-  ]
+function PositionDelta({ delta }: { delta: number }) {
+  if (delta === 0) return <Minus className="w-3 h-3 text-gray-700" />
+  if (delta > 0) {
+    return (
+      <span className="flex items-center gap-0.5 text-emerald-400 font-bold leading-none" style={{ fontSize: 11 }}>
+        <ChevronUp className="w-3 h-3" />{delta}
+      </span>
+    )
+  }
   return (
-    <div className="animate-fade-in-overlay absolute inset-0 bg-black/55">
-      <div className="animate-slide-up-overlay absolute bg-white rounded-2xl p-5 w-72 shadow-2xl"
-        style={{ left:'50%', top:'50%', transform:'translate(-50%,-50%)' }}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-gray-900">Recent Results</h3>
-          <span className="text-xs bg-purple-50 text-purple-600 font-medium px-2 py-0.5 rounded-full">Season 5</span>
-        </div>
-        <div className="space-y-2.5">
-          {results.map(({ clan, opp, score, win }) => (
-            <div key={clan+opp} className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${win?'bg-green-100 text-green-700':'bg-red-100 text-red-600'}`}>
-                  {win?'W':'L'}
-                </span>
-                <span className="text-sm text-gray-700 font-medium">{clan} <span className="text-gray-400 font-normal">vs</span> {opp}</span>
-              </div>
-              <span className="text-sm font-semibold text-gray-900">{score}</span>
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-          <span className="text-xs text-gray-500">Season record</span>
-          <span className="text-sm font-bold text-gray-900">38W – 14L</span>
-        </div>
-      </div>
-    </div>
+    <span className="flex items-center gap-0.5 text-red-400 font-bold leading-none" style={{ fontSize: 11 }}>
+      <ChevronDown className="w-3 h-3" />{Math.abs(delta)}
+    </span>
   )
 }
 
-function CommunityOverlay() {
-  const posts = [
-    { text: 'Season 5 tournament registration is now open!', time: '2h ago',  dot: 'bg-blue-400'   },
-    { text: 'Team Winter X wins regional finals 3–0 🏆',     time: '5h ago',  dot: 'bg-purple-400' },
-    { text: 'Clan Wars event happening this weekend',        time: '1d ago',  dot: 'bg-green-400'  },
-    { text: 'New Team Winter merch drop — limited edition',  time: '2d ago',  dot: 'bg-orange-400' },
-  ]
-  return (
-    <div className="animate-fade-in-overlay absolute inset-0 bg-black/55">
-      <div className="animate-slide-up-overlay absolute bg-white rounded-2xl p-5 w-72 shadow-2xl"
-        style={{ left:'50%', top:'50%', transform:'translate(-50%,-50%)' }}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-gray-900">Latest Updates</h3>
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-        </div>
-        <div className="space-y-3">
-          {posts.map(({ text, time, dot }, i) => (
-            <div key={i} className="flex gap-2.5">
-              <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${dot}`} />
-              <div>
-                <p className="text-sm text-gray-800 leading-snug">{text}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{time}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
+function getLegendDayLabel(): string {
+  const d = new Date()
+  if (d.getUTCHours() < 5) d.setUTCDate(d.getUTCDate() - 1)
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
 }
 
-function StatsOverlay() {
-  const metrics = [
-    { label: 'Total Members', value: '10,284', color: 'text-blue-600'   },
-    { label: 'Win Rate',      value: '73%',     color: 'text-green-600'  },
-    { label: 'Trophies',      value: '148',      color: 'text-yellow-600' },
-    { label: 'Active Clans',  value: '7',        color: 'text-purple-600' },
-  ]
-  return (
-    <div className="animate-fade-in-overlay absolute inset-0 bg-black/55">
-      <div className="animate-slide-up-overlay absolute bg-white rounded-2xl p-5 w-72 shadow-2xl"
-        style={{ left:'50%', top:'50%', transform:'translate(-50%,-50%)' }}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-gray-900">Season 5 Stats</h3>
-          <span className="text-xs bg-orange-50 text-orange-600 font-medium px-2 py-0.5 rounded-full">Live</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2.5 mb-3">
-          {metrics.map(({ label, value, color }) => (
-            <div key={label} className="bg-gray-50 rounded-xl p-3">
-              <p className="text-xs text-gray-500 mb-0.5">{label}</p>
-              <p className={`text-lg font-bold ${color}`}>{value}</p>
-            </div>
-          ))}
-        </div>
-        <div>
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>Season goal</span><span>73 / 100 wins</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-1.5">
-            <div className="bg-orange-400 h-1.5 rounded-full" style={{ width:'73%' }} />
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+export default function LeaderboardPage() {
+  const [entries, setEntries]               = useState<LeaderboardEntry[]>([])
+  const [lastUpdated, setLastUpdated]       = useState<number | null>(null)
+  const [nextUpdate, setNextUpdate]         = useState<number | null>(null)
+  const [error, setError]                   = useState<string | null>(null)
+  const [loading, setLoading]               = useState(true)
+  const [countdown, setCountdown]           = useState(60)
+  const [positionDeltas, setPositionDeltas] = useState<Record<string, number>>({})
+  const [highlighted, setHighlighted]       = useState<Set<string>>(new Set())
 
-export default function Page() {
-  const [activeTab, setActiveTab] = useState<TabId>('clans')
+  const prevPositions    = useRef<Record<string, number>>({})
+  const prevTrophies     = useRef<Record<string, number>>({})
+  const highlightTimers  = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
+
+  async function fetchLeaderboard() {
+    try {
+      const res = await fetch('/api/leaderboard', { cache: 'no-store' })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data: ApiResponse = await res.json()
+
+      if (!data.entries) throw new Error(data.error ?? 'No entries in response')
+
+      const newDeltas: Record<string, number> = {}
+      const newHighlighted = new Set<string>()
+
+      data.entries.forEach((entry, idx) => {
+        const prevIdx = prevPositions.current[entry.tag]
+        newDeltas[entry.tag] = prevIdx !== undefined ? prevIdx - idx : 0
+
+        const prevT = prevTrophies.current[entry.tag]
+        if (prevT !== undefined && prevT !== entry.trophies) {
+          newHighlighted.add(entry.tag)
+          clearTimeout(highlightTimers.current[entry.tag])
+          highlightTimers.current[entry.tag] = setTimeout(() => {
+            setHighlighted(prev => { const n = new Set(prev); n.delete(entry.tag); return n })
+          }, 8_000)
+        }
+      })
+
+      data.entries.forEach((entry, idx) => {
+        prevPositions.current[entry.tag] = idx
+        prevTrophies.current[entry.tag]  = entry.trophies
+      })
+
+      if (newHighlighted.size > 0) {
+        setHighlighted(prev => new Set([...prev, ...newHighlighted]))
+      }
+
+      setPositionDeltas(newDeltas)
+      setEntries(data.entries)
+      setLastUpdated(data.lastUpdated)
+      setNextUpdate(data.nextUpdate)
+      setError(data.error ?? null)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveTab(prev => {
-        const idx = TABS.findIndex(t => t.id === prev)
-        return TABS[(idx + 1) % TABS.length].id
-      })
-    }, 4000)
-    return () => clearInterval(interval)
+    fetchLeaderboard()
+    const interval = setInterval(fetchLeaderboard, 60_000)
+    return () => {
+      clearInterval(interval)
+      Object.values(highlightTimers.current).forEach(clearTimeout)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    if (!nextUpdate) return
+    const tick = setInterval(() => {
+      setCountdown(Math.max(0, Math.ceil((nextUpdate - Date.now()) / 1000)))
+    }, 500)
+    return () => clearInterval(tick)
+  }, [nextUpdate])
+
+  const COL = '3.5rem 1fr 7rem 4.5rem 7.5rem'
+
   return (
-    <div
-      className="h-screen overflow-hidden flex flex-col"
-      style={{ background:'linear-gradient(180deg,#ffffff 0%,#f4f7ff 70%,#eef2ff 100%)' }}
-    >
-      {/* ─ Nav ─ */}
-      <div
-        className="animate-fade-in-up flex-shrink-0 px-6 py-3 flex items-center justify-between max-w-7xl w-full mx-auto"
-        style={{ animationDelay:'0.1s', opacity:0 }}
-      >
-        <div className="flex items-center gap-2">
-          <Snowflake className="w-5 h-5" />
-          <span className="text-lg font-semibold">Team Winter</span>
-        </div>
-        <nav className="hidden md:flex items-center gap-8">
-          <button className="flex items-center gap-1 text-sm text-gray-700 hover:text-black transition-colors">Clans <ChevronDown size={14}/></button>
-          <button className="flex items-center gap-1 text-sm text-gray-700 hover:text-black transition-colors">eSports <ChevronDown size={14}/></button>
-          <button className="text-sm text-gray-700 hover:text-black transition-colors">Community</button>
-          <button className="text-sm text-gray-700 hover:text-black transition-colors">Rankings</button>
-        </nav>
-        <div className="flex items-center gap-4">
-          <button className="text-sm text-gray-700 hover:text-black transition-colors">Login</button>
-          <button className="bg-black text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">Join the Clan</button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#070b14] text-white flex flex-col">
 
-      {/* ─ Hero ─ */}
-      <section className="flex-1 min-h-0 flex flex-col items-center px-6 pt-4 pb-2 text-center overflow-hidden max-w-5xl w-full mx-auto gap-3">
-
-        <div
-          className="animate-fade-in-up flex-shrink-0 inline-flex items-center gap-2"
-          style={{ animationDelay:'0.2s', opacity:0 }}
-        >
-          <div className="w-6 h-6 border border-gray-300 rounded flex items-center justify-center">
-            <Snowflake size={12} className="text-black" />
+      <header className="flex-none border-b border-white/5 bg-[#0c1220]/90 backdrop-blur sticky top-0 z-20">
+        <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-sky-500/20 ring-1 ring-sky-400/40 flex items-center justify-center flex-shrink-0">
+              <Snowflake className="w-4 h-4 text-sky-400" />
+            </div>
+            <div className="leading-tight">
+              <div className="text-sm font-semibold">Team Winter</div>
+              <div className="text-[11px] text-gray-500">Legend League · {getLegendDayLabel()}</div>
+            </div>
           </div>
-          <span className="text-sm font-medium text-black">10K+ members &middot; 7 active clans</span>
-        </div>
-
-        <h1
-          className="animate-fade-in-up flex-shrink-0 text-4xl md:text-5xl lg:text-6xl font-normal leading-[1.1] tracking-tight"
-          style={{ animationDelay:'0.3s', opacity:0 }}
-        >
-          Compete. Connect. Conquer.
-          <br />
-          <span className="bg-gradient-to-r from-black via-gray-500 to-gray-400 bg-clip-text text-transparent">
-            Team Winter Reigns Supreme.
-          </span>
-        </h1>
-
-        <p
-          className="animate-fade-in-up flex-shrink-0 text-sm md:text-base text-gray-600 max-w-xl"
-          style={{ animationDelay:'0.4s', opacity:0 }}
-        >
-          The ultimate hub for all Team Winter clans &mdash; manage your roster, track tournament results, stay connected with the community, and dominate the leaderboards.
-        </p>
-
-        <button
-          className="animate-fade-in-up flex-shrink-0 bg-black text-white px-7 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
-          style={{ animationDelay:'0.5s', opacity:0 }}
-        >
-          Join the Clan
-        </button>
-
-        {/* Tab bar */}
-        <div
-          className="animate-fade-in-up flex-shrink-0 flex justify-center w-full"
-          style={{ animationDelay:'0.6s', opacity:0 }}
-        >
-          <div className="md:hidden bg-gray-100 rounded-lg p-1 grid grid-cols-2 gap-1 w-full max-w-xs">
-            {TABS.map(({id,label,Icon})=>(
-              <button key={id} onClick={()=>setActiveTab(id)}
-                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab===id?'bg-white text-black shadow-sm':'text-gray-600 hover:text-gray-900'}`}>
-                <Icon size={14}/>{label}
-              </button>
-            ))}
-          </div>
-          <div className="hidden md:flex bg-gray-100 rounded-lg p-1 items-center">
-            {TABS.map(({id,label,Icon},i)=>(
-              <Fragment key={id}>
-                <button onClick={()=>setActiveTab(id)}
-                  className={`flex items-center gap-2 px-5 py-2 rounded-md text-sm font-medium transition-all ${activeTab===id?'bg-white text-black shadow-sm':'text-gray-600 hover:text-gray-900'}`}>
-                  <Icon size={14}/>{label}
-                </button>
-                {i<TABS.length-1&&<div className="w-px h-5 bg-gray-300 mx-0.5" />}
-              </Fragment>
-            ))}
+          <div className="flex items-center gap-5">
+            <div className="flex items-center gap-1.5">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+              </span>
+              <span className="text-[11px] font-semibold text-emerald-400 tracking-wider">LIVE</span>
+            </div>
+            <div className="flex items-center gap-1 text-[11px] text-gray-600">
+              <Clock className="w-3 h-3" />
+              <span className="tabular-nums w-8">{countdown > 0 ? `${countdown}s` : 'now…'}</span>
+            </div>
           </div>
         </div>
+        {!loading && entries.length > 0 && (
+          <div className="max-w-3xl mx-auto px-4 pb-2 flex items-center gap-5 text-[11px] text-gray-600">
+            <span><span className="text-gray-400 font-medium">{entries.length}</span> Legend players</span>
+            <span>3 clans combined</span>
+            {lastUpdated && <span>Updated {Math.round((Date.now() - lastUpdated) / 1000)}s ago</span>}
+          </div>
+        )}
+      </header>
 
-        {/* Video + overlays */}
-        <div
-          className="animate-fade-in-up relative rounded-2xl overflow-hidden w-full flex-1 min-h-0"
-          style={{ animationDelay:'0.7s', opacity:0 }}
-        >
-          <video className="w-full h-full object-cover"
-            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260319_165750_358b1e72-c921-48b7-aaac-f200994f32fb.mp4"
-            autoPlay loop muted playsInline />
-          {activeTab==='clans'     && <ClansOverlay />}
-          {activeTab==='esports'   && <EsportsOverlay />}
-          {activeTab==='community' && <CommunityOverlay />}
-          {activeTab==='stats'     && <StatsOverlay />}
-        </div>
-      </section>
+      <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-5">
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-32 gap-4">
+            <div className="w-9 h-9 rounded-full border-2 border-sky-500/20 border-t-sky-400 animate-spin" />
+            <p className="text-sm text-gray-600">Fetching Legend League data…</p>
+          </div>
+        )}
 
-      {/* ─ App Dock ─ */}
-      <div
-        className="animate-fade-in-up flex-shrink-0 flex justify-center py-5 px-6"
-        style={{ animationDelay:'0.8s', opacity:0 }}
-      >
-        <div className="ios-dock inline-flex items-end gap-5 md:gap-8 px-7 md:px-9 py-4 rounded-[36px]">
-          {APPS.map(({ label, Icon, grad, glow, glowSoft, delay }) => (
-            <button
-              key={label}
-              className="flex flex-col items-center gap-2 hover:scale-110 active:scale-95 transition-transform duration-200"
-            >
+        {error && (
+          <div className="mb-4 rounded-xl bg-red-950/40 ring-1 ring-red-700/30 p-4 flex gap-3">
+            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-red-300 font-medium">API Error</p>
+              <p className="text-xs text-red-400/60 mt-0.5 break-all">{error}</p>
+              {(error.includes('COC_API_KEY') || error.includes('401') || error.includes('403')) && (
+                <p className="text-xs text-gray-600 mt-2">
+                  Add COC_API_KEY to Vercel env vars. Your key must allow Vercel&apos;s outbound IPs —
+                  open the CoC developer portal and set the allowed IP to 0.0.0.0/0.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {!loading && entries.length > 0 && (
+          <div className="rounded-2xl ring-1 ring-white/5 bg-[#0c1220]/60 overflow-x-auto">
+            <div className="min-w-[580px]">
               <div
-                className="icon-glow ios-shine relative w-[60px] h-[60px] md:w-[68px] md:h-[68px] flex items-center justify-center overflow-hidden"
-                style={{
-                  borderRadius: '22px',
-                  background: grad,
-                  '--glow': glow,
-                  '--glow-soft': glowSoft,
-                  animationDelay: delay,
-                } as React.CSSProperties}
+                className="grid items-center gap-3 px-4 py-2.5 border-b border-white/5 bg-white/[0.025] text-[10px] text-gray-600 font-semibold uppercase tracking-widest"
+                style={{ gridTemplateColumns: COL }}
               >
-                <Icon size={28} className="text-white relative z-10" strokeWidth={1.6} />
+                <span>Rank</span>
+                <span>Player</span>
+                <span className="text-right">Trophies</span>
+                <span className="text-right">Today</span>
+                <span>Attacks</span>
               </div>
-              <span className="text-[11px] font-medium text-gray-500 leading-none">{label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+              <div className="divide-y divide-white/[0.04]">
+                {entries.map((entry, idx) => {
+                  const isHighlighted = highlighted.has(entry.tag)
+                  const delta = positionDeltas[entry.tag] ?? 0
+                  const rankColor =
+                    idx === 0 ? 'text-amber-400'
+                    : idx === 1 ? 'text-gray-300'
+                    : idx === 2 ? 'text-amber-600/80'
+                    : 'text-gray-600'
+                  return (
+                    <div
+                      key={entry.tag}
+                      className={`grid items-center gap-3 px-4 py-3 transition-all duration-700 ${
+                        isHighlighted
+                          ? 'bg-emerald-500/[0.06] ring-1 ring-inset ring-emerald-500/20'
+                          : 'hover:bg-white/[0.02]'
+                      }`}
+                      style={{ gridTemplateColumns: COL }}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className={`text-sm font-bold tabular-nums w-5 text-right ${rankColor}`}>{idx + 1}</span>
+                        <PositionDelta delta={delta} />
+                      </div>
+                      <div className="min-w-0 flex items-center gap-2">
+                        <span className="font-semibold text-sm text-white truncate">{entry.name}</span>
+                        <ClanPill clanName={entry.clanName} clanTag={entry.clanTag} />
+                      </div>
+                      <div className="text-right">
+                        <div className="inline-flex items-center justify-end gap-1">
+                          <Trophy className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                          <span className="font-bold text-sm tabular-nums">{entry.trophies.toLocaleString()}</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        {entry.trophyGainsToday > 0 ? (
+                          <span className={`font-semibold text-sm tabular-nums ${
+                            isHighlighted ? 'text-emerald-300' : 'text-emerald-500'
+                          }`}>+{entry.trophyGainsToday}</span>
+                        ) : (
+                          <span className="text-gray-700 text-sm">—</span>
+                        )}
+                      </div>
+                      <div><AttackDots used={entry.attacksUsed} /></div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!loading && !error && entries.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-32 gap-3 text-gray-700">
+            <Trophy className="w-10 h-10 opacity-20" />
+            <p className="text-sm">No Legend League members found across the 3 clans</p>
+          </div>
+        )}
+      </main>
+
+      <footer className="flex-none py-4 border-t border-white/[0.04] text-center text-[11px] text-gray-800">
+        Team Winter Legend League Tracker · Resets daily at 05:00 UTC
+      </footer>
     </div>
   )
 }
