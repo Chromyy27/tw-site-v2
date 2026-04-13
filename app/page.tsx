@@ -94,10 +94,16 @@ export default function LeaderboardPage() {
   async function fetchLeaderboard() {
     try {
       const res = await fetch('/api/leaderboard', { cache: 'no-store' })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data: ApiResponse = await res.json()
+      // Always parse JSON first so we get the real error message
+      const data: ApiResponse = await res.json().catch(() => ({
+        entries: [],
+        lastUpdated: 0,
+        nextUpdate: 0,
+        error: `HTTP ${res.status} (server returned non-JSON)`,
+      }))
 
-      if (!data.entries) throw new Error(data.error ?? 'No entries in response')
+      if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`)
+      if (!data.entries) throw new Error(data.error ?? 'No entries field in response')
 
       const newDeltas: Record<string, number> = {}
       const newHighlighted = new Set<string>()
@@ -205,13 +211,19 @@ export default function LeaderboardPage() {
         {error && (
           <div className="mb-4 rounded-xl bg-red-950/40 ring-1 ring-red-700/30 p-4 flex gap-3">
             <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-            <div>
+            <div className="min-w-0">
               <p className="text-sm text-red-300 font-medium">API Error</p>
               <p className="text-xs text-red-400/60 mt-0.5 break-all">{error}</p>
-              {(error.includes('COC_API_KEY') || error.includes('401') || error.includes('403')) && (
-                <p className="text-xs text-gray-600 mt-2">
-                  Add COC_API_KEY to Vercel env vars. Your key must allow Vercel&apos;s outbound IPs —
-                  open the CoC developer portal and set the allowed IP to 0.0.0.0/0.
+              {(error.includes('403') || error.includes('401') || error.includes('accessDenied') || error.includes('IP')) && (
+                <p className="text-xs text-gray-500 mt-2">
+                  The CoC API key is rejecting requests from Vercel&apos;s IP. You need to edit the key
+                  at developer.clashofclans.com and set the allowed IP to <code className="text-gray-400">0.0.0.0/0</code>.
+                </p>
+              )}
+              {error.includes('COC_API_KEY') && (
+                <p className="text-xs text-gray-500 mt-2">
+                  Go to Vercel → your project → Settings → Environment Variables and add <code className="text-gray-400">COC_API_KEY</code>.
+                  Make sure to redeploy after adding it.
                 </p>
               )}
             </div>
