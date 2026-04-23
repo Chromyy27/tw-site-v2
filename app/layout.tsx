@@ -4,13 +4,15 @@ import './globals.css'
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
+  variable: '--font-inter',
 })
 
 export const metadata: Metadata = {
-  title: 'Team Winter',
-  description: 'Work Together. Stay Aligned. Team Winter Powers Your Work.',
+  title: 'Dawnline — Listen to the day',
+  description:
+    'A generative soundscape service that composes personalized ambient music from your mood, your place, and the hour of the day.',
 }
 
 export default function RootLayout({
@@ -19,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className={inter.variable}>
+      <body className={`${inter.className} bg-[#060216] text-white antialiased`}>{children}</body>
     </html>
   )
 }

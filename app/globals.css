@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --ink: #060216;
+  --ink-deep: #030010;
+  --violet: #7c5cff;
+  --violet-deep: #4a2fbf;
+  --coral: #ff8a6c;
+  --coral-light: #ffb39a;
+  --cyan: #7de2e2;
+  --rose: #ff6fa8;
+  --amber: #ffcf7a;
+}
+
+html, body {
+  background: var(--ink-deep);
+  color: #f4eef7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: rgba(255, 138, 108, 0.35);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
