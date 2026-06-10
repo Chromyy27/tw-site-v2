@@ -1,18 +1,10 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-inter',
-})
-
 export const metadata: Metadata = {
-  title: 'Dawnline — Listen to the day',
+  title: 'Team Winter — Forged in Ice, Built for War',
   description:
-    'A generative soundscape service that composes personalized ambient music from your mood, your place, and the hour of the day.',
+    'Competitive Clash of Clans Ecosystem. Multiple clans, elite CWL rosters, pro-level basepacks, and community events for players at every level worldwide.',
 }
 
 export default function RootLayout({
@@ -21,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className={`${inter.className} bg-[#060216] text-white antialiased`}>{children}</body>
+    <html lang="en">
+      <body className="bg-[#F5FAFD]">{children}</body>
     </html>
   )
 }
