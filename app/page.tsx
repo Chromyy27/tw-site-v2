@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import Navbar, { JOIN_URL } from '@/components/Navbar'
 import { Snowfall } from '@/components/Atmosphere'
+import { Tape, TornEdge } from '@/components/Paper'
 
 // Swap in your real numbers
 const STATS: Array<[string, string]> = [
@@ -29,7 +30,7 @@ interface PreviewEntry {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Hero stickers — floating pastel blobs, phantom-style               */
+/*  Hero stickers — die-cut paper cutouts                              */
 /* ------------------------------------------------------------------ */
 
 function Sticker({
@@ -43,12 +44,12 @@ function Sticker({
 }) {
   return (
     <div
-      className={`animate-bob absolute rounded-3xl shadow-[0_16px_40px_-12px_rgba(15,27,51,0.35)]
-        flex items-center justify-center ${bg} ${className}`}
+      className={`animate-bob absolute rounded-2xl border-[3px] border-ink ring-4 ring-white
+        shadow-[5px_5px_0_0_#2B2B2B] flex items-center justify-center ${bg} ${className}`}
       style={{ ['--rot' as string]: `${rot}deg`, animationDelay: `${delay}s`, transform: `rotate(${rot}deg)` }}
       aria-hidden
     >
-      <Icon className="w-1/2 h-1/2 text-[#0F1B33]" strokeWidth={2.2} />
+      <Icon className="w-1/2 h-1/2 text-ink" strokeWidth={2.4} />
     </div>
   )
 }
@@ -67,34 +68,39 @@ function TrackerPreview() {
       .catch(() => setEntries([]))
   }, [])
 
-  const medals = ['bg-amber-300', 'bg-slate-200', 'bg-orange-300']
+  const medals = ['bg-cartoon-yellow', 'bg-[#E9E9E9]', 'bg-[#F5BE93]']
 
   return (
-    <div className="mt-6 space-y-2.5">
+    <div className="mt-6 space-y-3">
       {entries === null &&
         Array.from({ length: 3 }, (_, i) => (
-          <div key={i} className="h-[52px] rounded-2xl bg-white/50 animate-pulse" />
+          <div key={i} className="h-[52px] rounded-2xl skeleton border-2 border-ink/10" />
         ))}
 
       {entries !== null && entries.length > 0 &&
         entries.map((e, i) => (
-          <div key={e.tag} className="flex items-center gap-3 rounded-2xl bg-white/70 backdrop-blur px-4 py-3">
-            <span className={`w-7 h-7 rounded-full ${medals[i]} text-[#0F1B33] text-[13px] font-display font-extrabold flex items-center justify-center flex-shrink-0`}>
+          <div
+            key={e.tag}
+            className="flex items-center gap-3 bg-white border-2 border-ink rounded-2xl px-4 py-3 shadow-[3px_3px_0_0_#2B2B2B]"
+            style={{ transform: `rotate(${i % 2 === 0 ? -0.4 : 0.5}deg)` }}
+          >
+            <span className={`w-8 h-8 rounded-full ${medals[i]} border-2 border-ink text-ink font-display text-sm
+              flex items-center justify-center flex-shrink-0 pt-0.5`}>
               {i + 1}
             </span>
-            <span className="font-display font-bold text-[15px] text-[#0F1B33] truncate flex-1">{e.name}</span>
+            <span className="font-sans font-bold text-[16px] text-ink truncate flex-1">{e.name}</span>
             {e.trophyGainsToday > 0 && (
-              <span className="text-[12px] font-bold text-emerald-600 tabular-nums">+{e.trophyGainsToday}</span>
+              <span className="text-[13px] font-bold text-emerald-600 tabular-nums">+{e.trophyGainsToday}</span>
             )}
-            <span className="flex items-center gap-1 font-bold text-[14px] text-[#0F1B33] tabular-nums">
-              <Trophy className="w-3.5 h-3.5 text-amber-500" />
+            <span className="flex items-center gap-1 font-bold text-[15px] text-ink tabular-nums">
+              <Trophy className="w-4 h-4 text-amber-500" strokeWidth={2.4} />
               {e.trophies.toLocaleString()}
             </span>
           </div>
         ))}
 
       {entries !== null && entries.length === 0 && (
-        <div className="rounded-2xl bg-white/60 px-4 py-5 text-sm text-[#0F1B33]/60">
+        <div className="bg-white/70 border-2 border-dashed border-ink/30 rounded-2xl px-4 py-5 text-[15px] text-ink/60 font-bold">
           Live standings load right inside the tracker.
         </div>
       )}
@@ -107,29 +113,33 @@ function TrackerPreview() {
 /* ------------------------------------------------------------------ */
 
 function BentoCard({
-  id, icon: Icon, title, children, bg, className = '', footer,
+  id, icon: Icon, title, children, bg, rot = 0, className = '', footer, tape = true,
 }: {
   id?: string
   icon: typeof Trophy
   title: string
   children: React.ReactNode
   bg: string
+  rot?: number
   className?: string
   footer?: React.ReactNode
+  tape?: boolean
 }) {
   return (
     <div
       id={id}
-      className={`group rounded-[32px] p-7 sm:p-8 flex flex-col transition-transform duration-300 hover:-translate-y-1.5
-        shadow-[0_20px_50px_-30px_rgba(15,27,51,0.35)] scroll-mt-28 ${bg} ${className}`}
+      style={{ transform: `rotate(${rot}deg)` }}
+      className={`group relative paper-card wobbly p-7 sm:p-8 flex flex-col transition-transform duration-300
+        hover:-translate-y-1.5 scroll-mt-28 ${bg} ${className}`}
     >
-      <div className="w-12 h-12 rounded-2xl bg-white/70 backdrop-blur flex items-center justify-center">
-        <Icon className="w-6 h-6 text-[#0F1B33]" strokeWidth={2.2} />
+      {tape && <Tape className="-top-3.5 left-1/2 -ml-12" rotate={-4} />}
+      <div className="w-12 h-12 rounded-full bg-white border-[3px] border-ink flex items-center justify-center">
+        <Icon className="w-6 h-6 text-ink" strokeWidth={2.4} />
       </div>
-      <h3 className="mt-5 font-display font-extrabold text-2xl sm:text-[26px] tracking-tight text-[#0F1B33]">
+      <h3 className="mt-5 font-display text-2xl sm:text-[27px] text-ink">
         {title}
       </h3>
-      <div className="mt-2.5 text-[15px] leading-relaxed text-[#0F1B33]/65 font-inter flex-1">
+      <div className="mt-2.5 text-[16px] leading-relaxed text-ink/70 font-sans font-bold flex-1">
         {children}
       </div>
       {footer && <div className="mt-6">{footer}</div>}
@@ -145,22 +155,19 @@ function PillLink({
   external?: boolean
   dark?: boolean
 }) {
-  const cls = `inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[13px] font-inter font-bold
-    transition-transform duration-200 hover:scale-[1.04] active:scale-[0.98] ${
-    dark ? 'bg-[#0F1B33] text-white' : 'bg-white text-[#0F1B33]'
-  }`
+  const cls = `btn-paper px-5 py-2.5 text-sm ${dark ? 'bg-ink text-paper' : 'bg-white text-ink'}`
   if (external) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
         {children}
-        <ArrowUpRight className="w-4 h-4" />
+        <ArrowUpRight className="w-4 h-4" strokeWidth={2.6} />
       </a>
     )
   }
   return (
     <Link href={href} className={cls}>
       {children}
-      <ArrowRight className="w-4 h-4" />
+      <ArrowRight className="w-4 h-4" strokeWidth={2.6} />
     </Link>
   )
 }
@@ -171,94 +178,90 @@ function PillLink({
 
 export default function HomePage() {
   return (
-    <div className="relative bg-[#F2F8FD] text-[#0F1B33]">
+    <div className="relative text-ink">
 
       {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#AFDEF9] via-[#BFE5FA] to-[#E3F2FC] rounded-b-[40px] sm:rounded-b-[56px] pb-20">
-        {/* soft glow blobs */}
-        <div className="absolute -top-24 -left-24 w-[480px] h-[480px] rounded-full bg-white/40 blur-3xl pointer-events-none" />
-        <div className="absolute top-1/3 -right-32 w-[520px] h-[520px] rounded-full bg-[#CBB8FF]/40 blur-3xl pointer-events-none" />
+      <section className="relative bg-cartoon-sky pb-24 sm:pb-28">
+        {/* flat paper clouds */}
+        <div className="absolute top-24 -left-16 w-72 h-24 rounded-full bg-white/60 pointer-events-none" aria-hidden />
+        <div className="absolute top-48 right-[-40px] w-80 h-28 rounded-full bg-white/50 pointer-events-none" aria-hidden />
+        <div className="absolute bottom-32 left-[12%] w-56 h-20 rounded-full bg-white/40 pointer-events-none" aria-hidden />
 
-        <Navbar theme="light" />
+        <Navbar />
 
-        <div className="relative max-w-6xl mx-auto px-6 sm:px-10 pt-14 sm:pt-20 lg:pt-24 pb-8 text-center">
+        <div className="relative max-w-6xl mx-auto px-6 sm:px-10 pt-14 sm:pt-20 lg:pt-24 pb-6 text-center">
 
           {/* Floating stickers */}
-          <Sticker icon={Trophy}    bg="bg-[#FFE175]" rot={-8} delay={0}   className="hidden md:flex w-20 h-20 left-[4%] top-[18%]" />
-          <Sticker icon={Swords}    bg="bg-[#CBB8FF]" rot={10} delay={0.7} className="hidden md:flex w-16 h-16 left-[12%] bottom-[6%]" />
-          <Sticker icon={Crown}     bg="bg-[#FFC9A8]" rot={7}  delay={1.4} className="hidden md:flex w-[72px] h-[72px] right-[5%] top-[14%]" />
-          <Sticker icon={Shield}    bg="bg-[#A8F0C6]" rot={-6} delay={2.1} className="hidden md:flex w-16 h-16 right-[13%] bottom-[10%]" />
-          <Sticker icon={Snowflake} bg="bg-white"     rot={12} delay={2.8} className="hidden lg:flex w-14 h-14 right-[24%] top-[2%]" />
+          <Sticker icon={Trophy}    bg="bg-cartoon-yellow"   rot={-8} delay={0}   className="hidden md:flex w-20 h-20 left-[4%] top-[18%]" />
+          <Sticker icon={Swords}    bg="bg-cartoon-lavender" rot={10} delay={0.7} className="hidden md:flex w-16 h-16 left-[12%] bottom-[4%]" />
+          <Sticker icon={Crown}     bg="bg-cartoon-peach"    rot={7}  delay={1.4} className="hidden md:flex w-[72px] h-[72px] right-[5%] top-[14%]" />
+          <Sticker icon={Shield}    bg="bg-cartoon-mint"     rot={-6} delay={2.1} className="hidden md:flex w-16 h-16 right-[13%] bottom-[8%]" />
+          <Sticker icon={Snowflake} bg="bg-white"            rot={12} delay={2.8} className="hidden lg:flex w-14 h-14 right-[24%] top-[0%]" />
 
           {/* Eyebrow */}
-          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full bg-white/70 backdrop-blur px-4 py-2 text-[12px] font-inter font-bold tracking-wide">
-            <Snowflake className="w-3.5 h-3.5 text-sky-500" />
+          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full bg-white border-2 border-ink
+            shadow-[3px_3px_0_0_#2B2B2B] px-4 py-2 text-[13px] font-sans font-bold">
+            <Snowflake className="w-4 h-4 text-[#1B87CE]" strokeWidth={2.6} />
             150+ members · 3 clans · one family
           </div>
 
           {/* Headline */}
-          <h1 className="animate-fade-up-delay-1 mt-7 mx-auto max-w-4xl font-display font-extrabold tracking-[-0.03em] leading-[1.02]
-            text-[clamp(2.6rem,7vw,5.5rem)]">
+          <h1 className="animate-fade-up-delay-1 mt-8 mx-auto max-w-4xl font-display leading-[1.02]
+            text-[clamp(2.6rem,6.5vw,5rem)] [text-shadow:4px_4px_0_rgba(43,43,43,0.12)]">
             The clan family that&rsquo;ll take you to{' '}
             <span className="relative inline-block whitespace-nowrap">
               <span className="relative z-10">Legend.</span>
-              <span className="absolute inset-x-0 bottom-[0.08em] h-[0.32em] bg-[#FFE175] -rotate-1 rounded-md" aria-hidden />
+              <span className="absolute inset-x-[-4px] bottom-[0.02em] h-[0.42em] bg-cartoon-yellow wobbly-sm -rotate-1" aria-hidden />
             </span>
           </h1>
 
           {/* Sub */}
-          <p className="animate-fade-up-delay-2 mt-6 mx-auto max-w-xl text-base sm:text-lg text-[#0F1B33]/65 font-inter leading-relaxed">
+          <p className="animate-fade-up-delay-2 mt-6 mx-auto max-w-xl text-lg sm:text-xl text-ink/70 font-sans font-bold leading-relaxed">
             Three war-hungry clans, elite base architects, and a live Legend League
             leaderboard we refuse to fall off. Bring your best attacks.
           </p>
 
           {/* CTAs */}
-          <div className="animate-fade-up-delay-3 mt-9 flex flex-wrap items-center justify-center gap-3.5">
+          <div className="animate-fade-up-delay-3 mt-9 flex flex-wrap items-center justify-center gap-4">
             <a
               href={JOIN_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-full bg-[#0F1B33] text-white px-7 py-4 text-sm font-inter font-bold
-                transition-transform duration-200 hover:scale-[1.04] active:scale-[0.98] shadow-[0_16px_40px_-12px_rgba(15,27,51,0.5)]"
+              className="btn-paper bg-cartoon-yellow text-ink px-7 py-3.5 text-base"
             >
               Join the Clan
-              <ArrowUpRight className="w-4 h-4" />
+              <ArrowUpRight className="w-5 h-5" strokeWidth={2.6} />
             </a>
-            <Link
-              href="/leaderboard"
-              className="flex items-center gap-2 rounded-full bg-white/90 backdrop-blur text-[#0F1B33] px-7 py-4 text-sm font-inter font-bold
-                transition-transform duration-200 hover:scale-[1.04] active:scale-[0.98]"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
+            <Link href="/leaderboard" className="btn-paper bg-white text-ink px-7 py-3.5 text-base">
+              <span className="w-2.5 h-2.5 rounded-full bg-cartoon-red border border-ink animate-pulse" />
               Live tracker
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-5 h-5" strokeWidth={2.6} />
             </Link>
           </div>
 
           {/* Rating strip */}
-          <div className="animate-fade-up-delay-4 mt-9 flex items-center justify-center gap-2 text-[13px] font-inter font-semibold text-[#0F1B33]/60">
+          <div className="animate-fade-up-delay-4 mt-9 flex items-center justify-center gap-2 text-[14px] font-sans font-bold text-ink/60">
             <span className="flex gap-0.5">
               {Array.from({ length: 5 }, (_, i) => (
-                <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                <Star key={i} className="w-4 h-4 fill-amber-400 text-ink" strokeWidth={2} />
               ))}
             </span>
             Rated 5.0 by our war log
           </div>
         </div>
+
+        <TornEdge fill="#FBF3E4" />
       </section>
 
       {/* ================= MARQUEE ================= */}
-      <div className="relative overflow-hidden bg-[#0F1B33] py-5 -mt-10 pt-14 sm:pt-16 -z-0">
+      <div className="relative overflow-hidden bg-cartoon-yellow border-y-[3px] border-ink py-3.5 -rotate-1 scale-[1.02] my-6">
         <div className="marquee-track flex w-max items-center gap-8 pr-8">
           {[0, 1].map(copy => (
             <div key={copy} className="flex items-center gap-8" aria-hidden={copy === 1}>
               {MARQUEE_ITEMS.map(item => (
                 <span key={`${copy}-${item}`} className="flex items-center gap-8">
-                  <span className="font-podium uppercase tracking-wider text-white/90 text-lg whitespace-nowrap">{item}</span>
-                  <Snowflake className="w-4 h-4 text-sky-400/80 flex-shrink-0" />
+                  <span className="font-display tracking-wide text-ink text-lg whitespace-nowrap pt-1">{item}</span>
+                  <Snowflake className="w-4 h-4 text-ink flex-shrink-0" strokeWidth={2.6} />
                 </span>
               ))}
             </div>
@@ -267,19 +270,20 @@ export default function HomePage() {
       </div>
 
       {/* ================= BENTO ================= */}
-      <section className="max-w-6xl mx-auto px-6 sm:px-10 pt-20 sm:pt-28">
-        <h2 className="font-display font-extrabold tracking-[-0.02em] text-4xl sm:text-5xl max-w-2xl">
+      <section className="max-w-6xl mx-auto px-6 sm:px-10 pt-16 sm:pt-24">
+        <h2 className="font-display text-4xl sm:text-5xl max-w-2xl [text-shadow:3px_3px_0_rgba(43,43,43,0.1)]">
           Everything your village needs.
         </h2>
-        <p className="mt-4 max-w-xl text-[#0F1B33]/60 font-inter text-base sm:text-lg">
+        <p className="mt-4 max-w-xl text-ink/60 font-sans font-bold text-lg">
           From daily Legend pushes to CWL rosters — Team Winter runs the whole show.
         </p>
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-6 gap-4 sm:gap-5">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-6 gap-6 sm:gap-7">
           <BentoCard
             icon={Zap}
             title="Legend League, live."
-            bg="bg-[#DCD2FF]"
+            bg="bg-cartoon-lavender"
+            rot={-0.5}
             className="md:col-span-4"
             footer={<PillLink href="/leaderboard">Open the tracker</PillLink>}
           >
@@ -292,14 +296,15 @@ export default function HomePage() {
             id="clans"
             icon={Users}
             title="Three clans, one family."
-            bg="bg-[#BEEFD4]"
+            bg="bg-cartoon-mint"
+            rot={0.7}
             className="md:col-span-2"
           >
             TW, TW2 and TWX — from competitive war cores to a home for rising
             attackers. There&rsquo;s a spot at your level.
             <div className="mt-5 flex flex-wrap gap-2">
               {['TW', 'TW2', 'TWX'].map(c => (
-                <span key={c} className="rounded-full bg-white/70 px-4 py-1.5 text-[13px] font-bold font-inter">
+                <span key={c} className="rounded-full bg-white border-2 border-ink px-4 py-1 text-[14px] font-bold font-sans shadow-[2px_2px_0_0_#2B2B2B]">
                   {c}
                 </span>
               ))}
@@ -310,7 +315,8 @@ export default function HomePage() {
             id="architects"
             icon={Hammer}
             title="War Architects."
-            bg="bg-[#FFEDB3]"
+            bg="bg-cartoon-yellow"
+            rot={0.6}
             className="md:col-span-2"
           >
             Elite base builders craft our war layouts. Bases that don&rsquo;t just
@@ -321,7 +327,8 @@ export default function HomePage() {
             id="cwl"
             icon={Trophy}
             title="CWL, every season."
-            bg="bg-[#FFD5BE]"
+            bg="bg-cartoon-peach"
+            rot={-0.6}
             className="md:col-span-2"
           >
             Organized rosters, planned hits and no missed attacks. We treat Clan War
@@ -332,7 +339,8 @@ export default function HomePage() {
             id="recruitment"
             icon={Swords}
             title="Recruitment is open."
-            bg="bg-[#BFE4FB]"
+            bg="bg-cartoon-sky"
+            rot={0.5}
             className="md:col-span-2"
             footer={<PillLink href={JOIN_URL} external>Apply in-game</PillLink>}
           >
@@ -345,12 +353,12 @@ export default function HomePage() {
       {/* ================= STATS ================= */}
       <section className="max-w-6xl mx-auto px-6 sm:px-10 py-20 sm:py-28">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-6">
-          {STATS.map(([value, label]) => (
-            <div key={label} className="text-center">
-              <div className="font-display font-extrabold tracking-[-0.03em] text-5xl sm:text-6xl lg:text-7xl">
+          {STATS.map(([value, label], i) => (
+            <div key={label} className="text-center" style={{ transform: `rotate(${i % 2 === 0 ? -1 : 1}deg)` }}>
+              <div className="font-display text-5xl sm:text-6xl lg:text-7xl [text-shadow:4px_4px_0_rgba(43,43,43,0.12)]">
                 {value}
               </div>
-              <div className="mt-2 text-[12px] sm:text-sm font-inter font-bold uppercase tracking-widest text-[#0F1B33]/45">
+              <div className="mt-2 text-[13px] sm:text-sm font-sans font-bold uppercase tracking-widest text-ink/50">
                 {label}
               </div>
             </div>
@@ -359,40 +367,35 @@ export default function HomePage() {
       </section>
 
       {/* ================= CTA ================= */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-10 pb-24">
-        <div className="relative overflow-hidden rounded-[40px] sm:rounded-[56px] bg-[#0F1B33] px-6 sm:px-16 py-16 sm:py-24 text-center">
-          {/* frost glow */}
-          <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-sky-500/20 blur-3xl pointer-events-none" />
-          <Snowfall zIndex="z-0" count={24} />
+      <section className="max-w-6xl mx-auto px-4 sm:px-10 pb-28">
+        <div className="relative paper-card wobbly bg-cartoon-night text-paper px-6 sm:px-16 py-16 sm:py-20 text-center overflow-hidden -rotate-[0.5deg]">
+          <Tape className="-top-3.5 left-8 sm:left-16" rotate={-8} />
+          <Tape className="-top-3.5 right-8 sm:right-16" rotate={7} />
+          <Snowfall zIndex="z-0" count={22} />
 
           <div className="relative z-10">
-            <div className="mx-auto w-16 h-16 rounded-3xl bg-white/10 ring-1 ring-white/15 flex items-center justify-center">
-              <Snowflake className="w-8 h-8 text-sky-300" />
+            <div className="mx-auto w-16 h-16 rounded-full bg-white border-[3px] border-ink flex items-center justify-center shadow-[4px_4px_0_0_rgba(0,0,0,0.35)]">
+              <Snowflake className="w-8 h-8 text-[#1B87CE]" strokeWidth={2.4} />
             </div>
-            <h2 className="mt-7 font-display font-extrabold tracking-[-0.03em] text-white text-4xl sm:text-6xl leading-[1.05]">
+            <h2 className="mt-7 font-display text-4xl sm:text-6xl leading-[1.05] [text-shadow:4px_4px_0_rgba(0,0,0,0.3)]">
               Ready to push Legend?
             </h2>
-            <p className="mt-5 mx-auto max-w-md text-white/60 font-inter text-base sm:text-lg">
+            <p className="mt-5 mx-auto max-w-md text-paper/80 font-sans font-bold text-lg">
               Winter is always coming. Join the family and make your attacks count.
             </p>
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-3.5">
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
               <a
                 href={JOIN_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-full bg-white text-[#0F1B33] px-7 py-4 text-sm font-inter font-bold
-                  transition-transform duration-200 hover:scale-[1.04] active:scale-[0.98]"
+                className="btn-paper bg-cartoon-yellow text-ink px-7 py-3.5 text-base"
               >
                 Join the Clan
-                <ArrowUpRight className="w-4 h-4" />
+                <ArrowUpRight className="w-5 h-5" strokeWidth={2.6} />
               </a>
-              <Link
-                href="/leaderboard"
-                className="flex items-center gap-2 rounded-full bg-white/10 ring-1 ring-white/20 text-white px-7 py-4 text-sm font-inter font-bold
-                  transition-transform duration-200 hover:scale-[1.04] active:scale-[0.98]"
-              >
+              <Link href="/leaderboard" className="btn-paper bg-white text-ink px-7 py-3.5 text-base">
                 Watch the leaderboard
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-5 h-5" strokeWidth={2.6} />
               </Link>
             </div>
           </div>
@@ -400,22 +403,22 @@ export default function HomePage() {
       </section>
 
       {/* ================= FOOTER ================= */}
-      <footer className="bg-[#0A1326] text-white rounded-t-[40px] sm:rounded-t-[56px] overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6 sm:px-10 pt-14 pb-6">
+      <footer className="relative bg-ink text-paper pt-16">
+        <TornEdge fill="#FBF3E4" flip />
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 pt-4 pb-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-6 text-[13px] font-inter font-semibold text-white/60">
-              <Link href="/leaderboard" className="hover:text-white transition-colors">Legend League</Link>
-              <a href={JOIN_URL} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Join in-game</a>
+            <div className="flex items-center gap-6 text-[14px] font-sans font-bold text-paper/60">
+              <Link href="/leaderboard" className="hover:text-paper transition-colors">Legend League</Link>
+              <a href={JOIN_URL} target="_blank" rel="noopener noreferrer" className="hover:text-paper transition-colors">Join in-game</a>
             </div>
-            <p className="text-[11px] font-inter text-white/35 text-center sm:text-right max-w-sm">
+            <p className="text-[12px] font-sans font-bold text-paper/35 text-center sm:text-right max-w-sm">
               Fan-made community site. Not affiliated with, endorsed or sponsored by Supercell.
             </p>
           </div>
         </div>
         {/* Giant wordmark */}
-        <div className="select-none pointer-events-none pb-3" aria-hidden>
-          <div className="font-podium font-bold uppercase leading-[0.82] tracking-[-0.03em] text-center
-            text-[11.5vw] text-white/[0.92] whitespace-nowrap">
+        <div className="select-none pointer-events-none pb-4" aria-hidden>
+          <div className="font-display leading-[0.9] text-center text-[11vw] text-paper/95 whitespace-nowrap">
             TEAM WINTER
           </div>
         </div>

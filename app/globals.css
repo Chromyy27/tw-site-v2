@@ -1,15 +1,9 @@
-@import url('https://db.onlinewebfonts.com/c/8b75d9dcff6a48c35a46656192adf019?family=FSP+DEMO+-+PODIUM+Sharp+4.11');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-.font-podium {
-  font-family: 'FSP DEMO - PODIUM Sharp 4.11', var(--font-display), var(--font-sans), sans-serif;
-}
-
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html {
@@ -17,13 +11,26 @@ html {
 }
 
 body {
-  background: #04070f;
+  background: #fbf3e4;
+  color: #2b2b2b;
   overflow-x: hidden;
 }
 
+/* paper grain over everything — the whole screen is one sheet */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  opacity: 0.07;
+  mix-blend-mode: multiply;
+}
+
 ::selection {
-  background: rgba(56, 189, 248, 0.35);
-  color: #fff;
+  background: #ffd95e;
+  color: #2b2b2b;
 }
 
 *::-webkit-scrollbar {
@@ -34,37 +41,41 @@ body {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.16);
+  background: rgba(43, 43, 43, 0.25);
   border-radius: 8px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.32);
+  background: rgba(43, 43, 43, 0.45);
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 
-/* ---------- Aurora background ---------- */
+/* ---------- Paper components ---------- */
 
-@keyframes aurora-a {
-  0%, 100% { transform: translate3d(-6%, -4%, 0) scale(1) rotate(0deg); }
-  50%      { transform: translate3d(9%, 7%, 0) scale(1.18) rotate(18deg); }
-}
-@keyframes aurora-b {
-  0%, 100% { transform: translate3d(5%, 3%, 0) scale(1.08); }
-  50%      { transform: translate3d(-9%, -7%, 0) scale(0.94); }
-}
-@keyframes aurora-c {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
-  50%      { transform: translate3d(-5%, 9%, 0) scale(1.22); opacity: 0.9; }
+@layer components {
+  .paper-card {
+    @apply bg-white border-[3px] border-ink shadow-[6px_6px_0_0_#2B2B2B];
+  }
+
+  .btn-paper {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-[3px] border-ink font-sans font-bold
+      shadow-[4px_4px_0_0_#2B2B2B] transition-all duration-150
+      hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#2B2B2B]
+      active:translate-x-1 active:translate-y-1 active:shadow-none;
+  }
 }
 
-.aurora-a { animation: aurora-a 26s ease-in-out infinite; }
-.aurora-b { animation: aurora-b 32s ease-in-out infinite; }
-.aurora-c { animation: aurora-c 22s ease-in-out infinite; }
+/* hand-drawn wobbly border radii */
+.wobbly {
+  border-radius: 1.9rem 1.3rem 2.1rem 1.4rem / 1.4rem 2.1rem 1.3rem 1.9rem;
+}
+.wobbly-sm {
+  border-radius: 1rem 0.75rem 1.1rem 0.8rem / 0.8rem 1.1rem 0.75rem 1rem;
+}
 
-/* ---------- Snowfall ---------- */
+/* ---------- Snowfall — paper confetti ---------- */
 
 @keyframes snow-fall {
   0%   { transform: translate3d(0, -6vh, 0); }
@@ -75,7 +86,8 @@ body {
   position: fixed;
   top: 0;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(186, 230, 253, 0.4) 70%, transparent 100%);
+  background: #bfe0f5;
+  border: 1px solid rgba(43, 43, 43, 0.25);
   pointer-events: none;
   animation-name: snow-fall;
   animation-timing-function: linear;
@@ -93,9 +105,9 @@ body {
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.03) 25%,
-    rgba(255, 255, 255, 0.09) 50%,
-    rgba(255, 255, 255, 0.03) 75%
+    rgba(43, 43, 43, 0.05) 25%,
+    rgba(43, 43, 43, 0.12) 50%,
+    rgba(43, 43, 43, 0.05) 75%
   );
   background-size: 400px 100%;
   animation: shimmer 1.4s infinite linear;
@@ -115,10 +127,11 @@ body {
   to   { opacity: 1; }
 }
 
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1); }
-}
+.animate-fade-up-delay-1 { animation: fade-up 0.8s ease-out 0.2s both; }
+.animate-fade-up-delay-2 { animation: fade-up 0.8s ease-out 0.4s both; }
+.animate-fade-up-delay-3 { animation: fade-up 0.8s ease-out 0.6s both; }
+.animate-fade-up-delay-4 { animation: fade-up 0.8s ease-out 0.8s both; }
+.animate-fade-in         { animation: fade-in 0.8s ease-out both; }
 
 @keyframes marquee {
   to { transform: translateX(-50%); }
@@ -137,40 +150,25 @@ body {
   animation: bob 5.5s ease-in-out infinite;
 }
 
-.animate-fade-up-delay-1 { animation: fade-up 0.8s ease-out 0.2s both; }
-.animate-fade-up-delay-2 { animation: fade-up 0.8s ease-out 0.4s both; }
-.animate-fade-up-delay-3 { animation: fade-up 0.8s ease-out 0.6s both; }
-.animate-fade-up-delay-4 { animation: fade-up 0.8s ease-out 0.8s both; }
-.animate-fade-in         { animation: fade-in 0.8s ease-out both; }
-.animate-fade-in-delay   { animation: fade-in 0.8s ease-out 0.3s both; }
-
 @keyframes crown-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-5px); }
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50%      { transform: translateY(-5px) rotate(4deg); }
 }
 
 .animate-crown-float {
   animation: crown-float 3.2s ease-in-out infinite;
 }
 
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.55; }
-  50%      { opacity: 1; }
-}
-
-.animate-glow-pulse {
-  animation: glow-pulse 3s ease-in-out infinite;
-}
-
 /* ---------- Accessibility ---------- */
 
 @media (prefers-reduced-motion: reduce) {
   .snowflake,
-  .aurora-a,
-  .aurora-b,
-  .aurora-c,
   .animate-crown-float,
   .animate-fade-up,
+  .animate-fade-up-delay-1,
+  .animate-fade-up-delay-2,
+  .animate-fade-up-delay-3,
+  .animate-fade-up-delay-4,
   .animate-bob,
   .marquee-track {
     animation: none !important;

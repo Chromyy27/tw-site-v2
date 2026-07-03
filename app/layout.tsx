@@ -1,18 +1,19 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Sora } from 'next/font/google'
+import { Luckiest_Guy, Comic_Neue } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({
+const display = Luckiest_Guy({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-display',
+})
+
+const body = Comic_Neue({
+  weight: ['400', '700'],
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans',
-})
-
-const sora = Sora({
-  subsets: ['latin'],
-  weight: ['500', '600', '700', '800'],
-  display: 'swap',
-  variable: '--font-display',
 })
 
 export const metadata: Metadata = {
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#04070f',
+  themeColor: '#FBF3E4',
 }
 
 export default function RootLayout({
@@ -33,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${sora.variable} font-sans antialiased`}>
+      <body className={`${display.variable} ${body.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>
