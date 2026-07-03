@@ -16,9 +16,9 @@ const sora = Sora({
 })
 
 export const metadata: Metadata = {
-  title: 'Team Winter — Legend League Live',
+  title: 'Team Winter — Elite Clash of Clans War Collective',
   description:
-    'Real-time Legend League trophy tracker for the Team Winter clan family. Live trophies, daily gains and attacks across all three clans.',
+    'Team Winter builds fierce clans and elite war bases that dominate. Home of the Team Winter clan family — live Legend League tracking across all three clans.',
   icons: { icon: '/favicon.svg' },
 }
 
