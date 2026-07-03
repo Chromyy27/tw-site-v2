@@ -1,16 +1,29 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
+import { Inter, Sora } from 'next/font/google'
 import './globals.css'
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
   display: 'swap',
+  variable: '--font-sans',
+})
+
+const sora = Sora({
+  subsets: ['latin'],
+  weight: ['500', '600', '700', '800'],
+  display: 'swap',
+  variable: '--font-display',
 })
 
 export const metadata: Metadata = {
-  title: 'Team Winter',
-  description: 'Work Together. Stay Aligned. Team Winter Powers Your Work.',
+  title: 'Team Winter — Legend League Live',
+  description:
+    'Real-time Legend League trophy tracker for the Team Winter clan family. Live trophies, daily gains and attacks across all three clans.',
+  icons: { icon: '/favicon.svg' },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#04070f',
 }
 
 export default function RootLayout({
@@ -20,7 +33,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.variable} ${sora.variable} font-sans antialiased`}>
+        {children}
+      </body>
     </html>
   )
 }

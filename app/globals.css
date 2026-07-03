@@ -1,3 +1,136 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #04070f;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.35);
+  color: #fff;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.16);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.32);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* ---------- Aurora background ---------- */
+
+@keyframes aurora-a {
+  0%, 100% { transform: translate3d(-6%, -4%, 0) scale(1) rotate(0deg); }
+  50%      { transform: translate3d(9%, 7%, 0) scale(1.18) rotate(18deg); }
+}
+@keyframes aurora-b {
+  0%, 100% { transform: translate3d(5%, 3%, 0) scale(1.08); }
+  50%      { transform: translate3d(-9%, -7%, 0) scale(0.94); }
+}
+@keyframes aurora-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
+  50%      { transform: translate3d(-5%, 9%, 0) scale(1.22); opacity: 0.9; }
+}
+
+.aurora-a { animation: aurora-a 26s ease-in-out infinite; }
+.aurora-b { animation: aurora-b 32s ease-in-out infinite; }
+.aurora-c { animation: aurora-c 22s ease-in-out infinite; }
+
+/* ---------- Snowfall ---------- */
+
+@keyframes snow-fall {
+  0%   { transform: translate3d(0, -6vh, 0); }
+  100% { transform: translate3d(var(--sway, 0px), 108vh, 0); }
+}
+
+.snowflake {
+  position: fixed;
+  top: 0;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(186, 230, 253, 0.4) 70%, transparent 100%);
+  pointer-events: none;
+  animation-name: snow-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+/* ---------- Micro-animations ---------- */
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 400px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes crown-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+.animate-crown-float {
+  animation: crown-float 3.2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* ---------- Accessibility ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .snowflake,
+  .aurora-a,
+  .aurora-b,
+  .aurora-c,
+  .animate-crown-float,
+  .animate-fade-up {
+    animation: none !important;
+  }
+}
