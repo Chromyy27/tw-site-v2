@@ -120,6 +120,23 @@ body {
   to   { opacity: 1; transform: scale(1); }
 }
 
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50%      { transform: translateY(-14px) rotate(var(--rot, 0deg)); }
+}
+
+.animate-bob {
+  animation: bob 5.5s ease-in-out infinite;
+}
+
 .animate-fade-up-delay-1 { animation: fade-up 0.8s ease-out 0.2s both; }
 .animate-fade-up-delay-2 { animation: fade-up 0.8s ease-out 0.4s both; }
 .animate-fade-up-delay-3 { animation: fade-up 0.8s ease-out 0.6s both; }
@@ -153,7 +170,9 @@ body {
   .aurora-b,
   .aurora-c,
   .animate-crown-float,
-  .animate-fade-up {
+  .animate-fade-up,
+  .animate-bob,
+  .marquee-track {
     animation: none !important;
   }
 }
