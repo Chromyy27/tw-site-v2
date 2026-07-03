@@ -8,6 +8,7 @@ import {
 import Navbar from '@/components/Navbar'
 import { Snowfall } from '@/components/Atmosphere'
 import { Tape } from '@/components/Paper'
+import { ScribbleUnderline, DoodleArrowLeft, Sparkle } from '@/components/Doodles'
 
 interface LeaderboardEntry {
   tag: string
@@ -383,7 +384,9 @@ export default function LeaderboardPage() {
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 pt-6 sm:pt-10 pb-16">
 
         {/* Hero */}
-        <section className="animate-fade-up text-center mb-10 sm:mb-12">
+        <section className="animate-fade-up relative text-center mb-10 sm:mb-12">
+          <Sparkle className="hidden md:block absolute w-6 h-6 left-[16%] top-2 text-cartoon-yellow rotate-12" />
+          <Sparkle className="hidden md:block absolute w-4 h-4 right-[14%] top-16 text-cartoon-yellow -rotate-6" />
           <div className="inline-flex items-center gap-2 rounded-full bg-white border-2 border-ink
             shadow-[3px_3px_0_0_#2B2B2B] px-4 py-2 text-[13px] font-sans font-bold">
             <Snowflake className="w-4 h-4 text-[#1B87CE]" strokeWidth={2.6} />
@@ -392,6 +395,7 @@ export default function LeaderboardPage() {
           <h1 className="mt-6 font-display text-4xl sm:text-6xl leading-[0.98] [text-shadow:4px_4px_0_rgba(43,43,43,0.12)]">
             Legend League
           </h1>
+          <ScribbleUnderline className="mx-auto mt-2 w-52 sm:w-64 text-cartoon-red" />
           <p className="mt-4 text-lg text-ink/65 font-sans font-bold max-w-xl mx-auto">
             Every trophy, every attack — tracked in real time across all three clans.
           </p>
@@ -492,7 +496,12 @@ export default function LeaderboardPage() {
 
             {/* Podium */}
             {podium.length === 3 && (
-              <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-5 mb-12 pt-4">
+              <section className="relative grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-5 mb-12 pt-4">
+                {/* handwritten note pointing at #1 */}
+                <span className="hidden sm:flex absolute -top-8 left-1/2 ml-28 items-start gap-1.5 rotate-[4deg] z-10" aria-hidden>
+                  <DoodleArrowLeft className="w-10 h-6 text-ink/80 mt-2" />
+                  <span className="font-hand text-xl text-ink/80 whitespace-nowrap">today&rsquo;s boss!</span>
+                </span>
                 {podium.map((entry, i) => (
                   <PodiumCard
                     key={entry.tag}

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Luckiest_Guy, Comic_Neue } from 'next/font/google'
+import { Luckiest_Guy, Comic_Neue, Patrick_Hand } from 'next/font/google'
 import './globals.css'
 
 const display = Luckiest_Guy({
@@ -14,6 +14,13 @@ const body = Comic_Neue({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans',
+})
+
+const hand = Patrick_Hand({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-hand',
 })
 
 export const metadata: Metadata = {
@@ -34,7 +41,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${display.variable} ${body.variable} font-sans antialiased`}>
+      <body className={`${display.variable} ${body.variable} ${hand.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>

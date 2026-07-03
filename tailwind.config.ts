@@ -36,6 +36,7 @@ const config: Config = {
         inter: ['var(--font-sans)', '"Comic Sans MS"', 'sans-serif'],
         display: ['var(--font-display)', 'var(--font-sans)', 'sans-serif'],
         podium: ['var(--font-display)', 'var(--font-sans)', 'sans-serif'],
+        hand: ['var(--font-hand)', 'var(--font-sans)', 'cursive'],
       },
     },
   },

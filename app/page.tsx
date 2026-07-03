@@ -9,6 +9,10 @@ import {
 import Navbar, { JOIN_URL } from '@/components/Navbar'
 import { Snowfall } from '@/components/Atmosphere'
 import { Tape, TornEdge } from '@/components/Paper'
+import {
+  ScribbleUnderline, DoodleArrow, DoodleArrowLeft, DoodleCircle,
+  Sparkle, SpeechBubble, Barbarian,
+} from '@/components/Doodles'
 
 // Swap in your real numbers
 const STATS: Array<[string, string]> = [
@@ -198,6 +202,24 @@ export default function HomePage() {
           <Sticker icon={Shield}    bg="bg-cartoon-mint"     rot={-6} delay={2.1} className="hidden md:flex w-16 h-16 right-[13%] bottom-[8%]" />
           <Sticker icon={Snowflake} bg="bg-white"            rot={12} delay={2.8} className="hidden lg:flex w-14 h-14 right-[24%] top-[0%]" />
 
+          {/* Paper-doll barbarian mascot */}
+          <div
+            className="animate-bob hidden lg:flex absolute left-[1.5%] top-[46%] flex-col items-start gap-2 z-10"
+            style={{ ['--rot' as string]: '-4deg', animationDelay: '1s', transform: 'rotate(-4deg)' }}
+            aria-hidden
+          >
+            <SpeechBubble className="ml-6 -rotate-2">MORE WARS!</SpeechBubble>
+            <div className="mt-1 w-24 h-24 rounded-2xl bg-cartoon-sky border-[3px] border-ink ring-4 ring-white
+              shadow-[5px_5px_0_0_#2B2B2B] flex items-center justify-center overflow-hidden">
+              <Barbarian className="w-20 h-20 mt-2" />
+            </div>
+          </div>
+
+          {/* doodle sparkles */}
+          <Sparkle className="hidden md:block absolute w-6 h-6 left-[27%] top-[6%] text-cartoon-yellow rotate-12" />
+          <Sparkle className="hidden md:block absolute w-4 h-4 left-[21%] top-[13%] text-white -rotate-6" />
+          <Sparkle className="hidden md:block absolute w-5 h-5 right-[19%] bottom-[24%] text-cartoon-yellow rotate-6" />
+
           {/* Eyebrow */}
           <div className="animate-fade-up inline-flex items-center gap-2 rounded-full bg-white border-2 border-ink
             shadow-[3px_3px_0_0_#2B2B2B] px-4 py-2 text-[13px] font-sans font-bold">
@@ -223,15 +245,22 @@ export default function HomePage() {
 
           {/* CTAs */}
           <div className="animate-fade-up-delay-3 mt-9 flex flex-wrap items-center justify-center gap-4">
-            <a
-              href={JOIN_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-paper bg-cartoon-yellow text-ink px-7 py-3.5 text-base"
-            >
-              Join the Clan
-              <ArrowUpRight className="w-5 h-5" strokeWidth={2.6} />
-            </a>
+            <span className="relative inline-flex">
+              <a
+                href={JOIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-paper bg-cartoon-yellow text-ink px-7 py-3.5 text-base"
+              >
+                Join the Clan
+                <ArrowUpRight className="w-5 h-5" strokeWidth={2.6} />
+              </a>
+              {/* handwritten nudge */}
+              <span className="hidden xl:flex absolute right-full top-1/2 -translate-y-[80%] mr-3 items-center gap-1.5 w-max rotate-[-5deg]" aria-hidden>
+                <span className="font-hand text-xl text-ink/80 whitespace-nowrap">smash this!</span>
+                <DoodleArrow className="w-9 h-8 text-ink/80 rotate-[15deg]" />
+              </span>
+            </span>
             <Link href="/leaderboard" className="btn-paper bg-white text-ink px-7 py-3.5 text-base">
               <span className="w-2.5 h-2.5 rounded-full bg-cartoon-red border border-ink animate-pulse" />
               Live tracker
@@ -274,6 +303,7 @@ export default function HomePage() {
         <h2 className="font-display text-4xl sm:text-5xl max-w-2xl [text-shadow:3px_3px_0_rgba(43,43,43,0.1)]">
           Everything your village needs.
         </h2>
+        <ScribbleUnderline className="mt-3 w-56 sm:w-64 text-cartoon-red" />
         <p className="mt-4 max-w-xl text-ink/60 font-sans font-bold text-lg">
           From daily Legend pushes to CWL rosters — Team Winter runs the whole show.
         </p>
@@ -289,6 +319,11 @@ export default function HomePage() {
           >
             Every trophy and every attack across all three clans, refreshed every 60
             seconds. Podium glory included.
+            {/* handwritten note */}
+            <span className="hidden md:flex absolute right-8 top-24 flex-col items-center rotate-[6deg]" aria-hidden>
+              <span className="font-hand text-xl text-ink/80 whitespace-nowrap">live, actually!</span>
+              <DoodleArrow className="w-9 h-8 text-ink/80 -scale-x-100 rotate-[10deg]" />
+            </span>
             <TrackerPreview />
           </BentoCard>
 
@@ -355,8 +390,11 @@ export default function HomePage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-6">
           {STATS.map(([value, label], i) => (
             <div key={label} className="text-center" style={{ transform: `rotate(${i % 2 === 0 ? -1 : 1}deg)` }}>
-              <div className="font-display text-5xl sm:text-6xl lg:text-7xl [text-shadow:4px_4px_0_rgba(43,43,43,0.12)]">
-                {value}
+              <div className="relative inline-block px-3">
+                {i === 1 && <DoodleCircle className="text-cartoon-red -m-2" />}
+                <div className="relative font-display text-5xl sm:text-6xl lg:text-7xl [text-shadow:4px_4px_0_rgba(43,43,43,0.12)]">
+                  {value}
+                </div>
               </div>
               <div className="mt-2 text-[13px] sm:text-sm font-sans font-bold uppercase tracking-widest text-ink/50">
                 {label}
@@ -377,7 +415,9 @@ export default function HomePage() {
             <div className="mx-auto w-16 h-16 rounded-full bg-white border-[3px] border-ink flex items-center justify-center shadow-[4px_4px_0_0_rgba(0,0,0,0.35)]">
               <Snowflake className="w-8 h-8 text-[#1B87CE]" strokeWidth={2.4} />
             </div>
-            <h2 className="mt-7 font-display text-4xl sm:text-6xl leading-[1.05] [text-shadow:4px_4px_0_rgba(0,0,0,0.3)]">
+            <h2 className="relative mt-7 font-display text-4xl sm:text-6xl leading-[1.05] [text-shadow:4px_4px_0_rgba(0,0,0,0.3)]">
+              <Sparkle className="hidden sm:block absolute w-7 h-7 left-[12%] -top-4 text-cartoon-yellow rotate-12" />
+              <Sparkle className="hidden sm:block absolute w-5 h-5 right-[14%] top-10 text-cartoon-yellow -rotate-12" />
               Ready to push Legend?
             </h2>
             <p className="mt-5 mx-auto max-w-md text-paper/80 font-sans font-bold text-lg">
