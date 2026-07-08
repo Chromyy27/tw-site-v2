@@ -38,6 +38,64 @@
 
   ::selection { background: rgba(77, 166, 255, 0.3); }
 
+  /* ============ LIQUID BACKDROP ============ */
+  /* soft drifting color fields behind the glass surfaces */
+
+  .lava {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .lava span {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(70px);
+    opacity: .55;
+    animation: drift 26s ease-in-out infinite alternate;
+  }
+
+  .lava span:nth-child(1) {
+    width: 640px; height: 640px;
+    left: -160px; top: -180px;
+    background: radial-gradient(circle, rgba(77,166,255,.45), rgba(77,166,255,0) 70%);
+  }
+  .lava span:nth-child(2) {
+    width: 720px; height: 720px;
+    right: -220px; top: 240px;
+    background: radial-gradient(circle, rgba(140,120,255,.32), rgba(140,120,255,0) 70%);
+    animation-delay: -8s;
+    animation-duration: 32s;
+  }
+  .lava span:nth-child(3) {
+    width: 560px; height: 560px;
+    left: 28%; top: 620px;
+    background: radial-gradient(circle, rgba(80,200,255,.35), rgba(80,200,255,0) 70%);
+    animation-delay: -16s;
+    animation-duration: 38s;
+  }
+
+  @keyframes drift {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(70px, 50px) scale(1.12); }
+    100% { transform: translate(-50px, 90px) scale(0.95); }
+  }
+
+  /* ============ LIQUID GLASS SURFACES ============ */
+
+  .glass {
+    background: linear-gradient(180deg, rgba(255,255,255,.66), rgba(255,255,255,.38));
+    -webkit-backdrop-filter: blur(18px) saturate(1.8);
+    backdrop-filter: blur(18px) saturate(1.8);
+    border: 1px solid rgba(255,255,255,.75);
+    box-shadow:
+      0 12px 34px rgba(11,27,51,.10),
+      inset 0 1.5px 0 rgba(255,255,255,.95),
+      inset 0 -1px 0 rgba(11,27,51,.04);
+  }
+
   /* ============ NAVBAR ============ */
 
   .nav-wrap {
@@ -50,9 +108,15 @@
   .nav {
     max-width: 1060px;
     margin: 0 auto;
-    background: #fff;
+    background: linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.34));
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    backdrop-filter: blur(20px) saturate(1.8);
+    border: 1px solid rgba(255,255,255,.8);
     border-radius: 999px;
-    box-shadow: 0 10px 30px rgba(11, 27, 51, 0.08);
+    box-shadow:
+      0 10px 32px rgba(11, 27, 51, 0.10),
+      inset 0 1.5px 0 rgba(255,255,255,.95),
+      inset 0 -1px 0 rgba(11,27,51,.05);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -107,25 +171,36 @@
   .btn:hover { transform: translateY(-2px); }
 
   .btn-navy {
-    background: var(--navy);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,0) 46%),
+      linear-gradient(180deg, #16294a, var(--navy));
     color: #fff;
-    box-shadow: 0 8px 20px rgba(11, 27, 51, 0.25);
+    border: 1px solid rgba(255,255,255,.18);
+    box-shadow:
+      0 8px 20px rgba(11, 27, 51, 0.28),
+      inset 0 1px 0 rgba(255,255,255,.35);
   }
-  .btn-navy:hover { box-shadow: 0 14px 30px rgba(11, 27, 51, 0.32); }
+  .btn-navy:hover { box-shadow: 0 14px 30px rgba(11, 27, 51, 0.36), inset 0 1px 0 rgba(255,255,255,.4); }
 
   .btn-gray {
-    background: #EDF2F8;
+    background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(230,240,250,.35));
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    backdrop-filter: blur(14px) saturate(1.6);
+    border: 1px solid rgba(255,255,255,.7);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 4px 14px rgba(11,27,51,.07);
     color: var(--navy);
   }
-  .btn-gray:hover { background: #E2EAF4; }
+  .btn-gray:hover { background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(230,240,250,.5)); }
 
   .btn-outline {
-    background: #fff;
+    background: linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.36));
+    -webkit-backdrop-filter: blur(16px) saturate(1.7);
+    backdrop-filter: blur(16px) saturate(1.7);
     color: var(--navy);
-    border: 1.5px solid var(--line);
-    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255,255,255,.8);
+    box-shadow: var(--card-shadow), inset 0 1.5px 0 rgba(255,255,255,.95);
   }
-  .btn-outline:hover { border-color: #CBDCF0; box-shadow: 0 12px 30px rgba(11, 27, 51, 0.12); }
+  .btn-outline:hover { box-shadow: 0 12px 30px rgba(11, 27, 51, 0.13), inset 0 1.5px 0 rgba(255,255,255,.95); }
 
   .hamburger {
     display: none;
@@ -157,9 +232,12 @@
     top: calc(100% + 10px);
     left: 0;
     right: 0;
-    background: #fff;
+    background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.6));
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    backdrop-filter: blur(24px) saturate(1.8);
+    border: 1px solid rgba(255,255,255,.85);
     border-radius: 24px;
-    box-shadow: 0 24px 60px rgba(11, 27, 51, 0.16);
+    box-shadow: 0 24px 60px rgba(11, 27, 51, 0.16), inset 0 1.5px 0 rgba(255,255,255,.95);
     padding: 18px;
     flex-direction: column;
     gap: 4px;
@@ -189,9 +267,13 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    border: 1.5px solid rgba(77, 166, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    outline: 1.5px solid rgba(77, 166, 255, 0.35);
     color: var(--blue-2);
-    background: rgba(77, 166, 255, 0.06);
+    background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(219,236,255,.35));
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    backdrop-filter: blur(14px) saturate(1.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 4px 16px rgba(30,111,217,.10);
     border-radius: 999px;
     padding: 8px 18px;
     font-size: 13.5px;
@@ -285,12 +367,18 @@
     transform: translate(-50%, -50%);
     width: 118px;
     height: 118px;
-    background: #fff;
+    background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.42));
+    -webkit-backdrop-filter: blur(16px) saturate(1.8);
+    backdrop-filter: blur(16px) saturate(1.8);
+    border: 1px solid rgba(255,255,255,.85);
     border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 14px 40px rgba(30, 111, 217, 0.22), inset 0 0 0 1.5px rgba(77, 166, 255, 0.25);
+    box-shadow:
+      0 14px 40px rgba(30, 111, 217, 0.22),
+      inset 0 2px 0 rgba(255,255,255,.95),
+      inset 0 0 0 1.5px rgba(77, 166, 255, 0.18);
     z-index: 2;
   }
 
@@ -322,9 +410,12 @@
   .node .card {
     width: 72px;
     height: 72px;
-    background: #fff;
+    background: linear-gradient(180deg, rgba(255,255,255,.68), rgba(255,255,255,.4));
+    -webkit-backdrop-filter: blur(14px) saturate(1.7);
+    backdrop-filter: blur(14px) saturate(1.7);
+    border: 1px solid rgba(255,255,255,.8);
     border-radius: 20px;
-    box-shadow: var(--card-shadow);
+    box-shadow: var(--card-shadow), inset 0 1.5px 0 rgba(255,255,255,.95);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -364,7 +455,11 @@
     top: calc(100% + 10px);
     left: 50%;
     transform: translateX(-50%) translateY(-4px);
-    background: var(--navy);
+    background: rgba(11, 27, 51, 0.82);
+    -webkit-backdrop-filter: blur(10px) saturate(1.5);
+    backdrop-filter: blur(10px) saturate(1.5);
+    border: 1px solid rgba(255,255,255,.22);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 8px 20px rgba(11,27,51,.25);
     color: #fff;
     font-size: 12px;
     font-weight: 600;
@@ -429,8 +524,14 @@
   }
 
   .section {
-    border-top: 1px solid var(--line);
-    padding: 64px 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.3));
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    backdrop-filter: blur(14px) saturate(1.6);
+    border: 1px solid rgba(255,255,255,.75);
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(11,27,51,.06), inset 0 1.5px 0 rgba(255,255,255,.9);
+    padding: 44px 40px;
+    margin-bottom: 20px;
     scroll-margin-top: 110px;
   }
 
@@ -497,12 +598,15 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hub svg.lines path, .center-node::before, .node .card { animation: none !important; }
+    .hub svg.lines path, .center-node::before, .node .card, .lava span { animation: none !important; }
     html { scroll-behavior: auto; }
   }
 </style>
 </head>
 <body>
+
+<!-- liquid color fields behind the glass -->
+<div class="lava" aria-hidden="true"><span></span><span></span><span></span></div>
 
 <!-- ================= NAVBAR ================= -->
 <div class="nav-wrap">
